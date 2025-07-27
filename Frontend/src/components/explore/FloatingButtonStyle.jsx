@@ -36,7 +36,7 @@ const FloatingMenuButton = () => {
 
       {/* Menu Items */}
       <div className={`absolute menu-button-position transition-all duration-300 ease-in-out ${
-        isMenuOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4 pointer-events-none'
+        isMenuOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4 pointer-events-none hidden'
       }`}>
         <div className="bg-white rounded-2xl shadow-2xl border border-red-100 p-4 min-w-72">
           <div className="space-y-2">
