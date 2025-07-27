@@ -7,8 +7,10 @@ import Footer from "@/components/Footer"
 import HeroBackground from "@/components/landing/hero-background"
 import MarqueeSection from "@/components/landing/marquee-section"
 import FAQSection from "@/components/landing/faq-section"
+import { useNavigate } from "react-router"
 
 export default function Home() {
+  const navigate = useNavigate();
   return (
     <div className="flex min-h-screen flex-col bg-white">
       <Navbar />
@@ -41,17 +43,18 @@ export default function Home() {
             </p>
 
             <div className="flex flex-wrap justify-center gap-4 mb-16">
-              <Button className="px-8 py-4 h-auto bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-full text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+              <Button className="px-8 py-4 h-auto bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-full text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+              onClick={() => {navigate("/start")}}>
                 <Play className="h-5 w-5 mr-2" />
                 Mulai Petualangan
               </Button>
-              <Button
+              {/* <Button
                 variant="outline"
                 className="px-8 py-4 h-auto border-2 border-red-500 text-red-600 hover:bg-red-50 rounded-full text-lg font-semibold bg-transparent"
               >
                 <BookOpen className="h-5 w-5 mr-2" />
                 Pelajari Lebih Lanjut
-              </Button>
+              </Button> */}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-4xl">

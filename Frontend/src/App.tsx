@@ -28,6 +28,8 @@ import MapGamePage from "./pages/GeoCulture/page";
 
 // @ts-ignore
 import DemoPage from "./pages/Demo/page";
+import NavigationPage from "./pages/Start/page";
+import LeaderboardPage from "./pages/Leaderboard/page";
 
 function App() {
 
@@ -60,8 +62,10 @@ function App() {
             <Route path="/reset-password" element={<ResetPasswordPage />} />
 
 
+            <Route path="/start" element={<NavigationPage />} />
             <Route path="/geoculture" element={<MapGamePage />} />
             <Route path="/explore" element={<DemoPage />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
 
             <Route path="*" element={<NotFoundPage />} />
 

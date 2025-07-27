@@ -11,6 +11,7 @@ import { Icon, latLng } from "leaflet";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import FloatingMenuButton from "@/components/geoculture/MenuButton";
+import { toast } from "sonner";
 
 interface LatLngProp {
   lat: number;
@@ -95,7 +96,7 @@ function MapGamePage() {
     if (currentQuestionIndex + 1 < quizData.quiz.length) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      alert("Anda telah menyelesaikan semua pertanyaan!");
+      toast("Anda telah menyelesaikan semua pertanyaan!");
     }
   }
 
@@ -123,7 +124,7 @@ function MapGamePage() {
       openModal()
       setShowResult(true)
     } else {
-      alert("Silakan klik pada peta untuk menempatkan marker terlebih dahulu!");
+      toast("Silakan klik pada peta untuk menempatkan marker terlebih dahulu!");
     }
   };
 
