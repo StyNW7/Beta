@@ -30,6 +30,7 @@ import MapGamePage from "./pages/GeoCulture/page";
 import DemoPage from "./pages/Demo/page";
 import NavigationPage from "./pages/Start/page";
 import LeaderboardPage from "./pages/Leaderboard/page";
+import WajahBudayaPage from "./pages/WajahBudaya/page";
 
 function App() {
 
@@ -66,6 +67,7 @@ function App() {
             <Route path="/geoculture" element={<MapGamePage />} />
             <Route path="/explore" element={<DemoPage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
+            <Route path="/wajah-budaya" element={<WajahBudayaPage />} />
 
             <Route path="*" element={<NotFoundPage />} />
 
