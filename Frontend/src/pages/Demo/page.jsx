@@ -40,7 +40,7 @@ function DemoPage() {
         <Joystick />
         <Leva hidden />
       </KeyboardControls>
-      <Modal />
+      {/* <Modal /> */}
       {/* <Menu /> */}
       <FloatingMenuButton />
     </div>

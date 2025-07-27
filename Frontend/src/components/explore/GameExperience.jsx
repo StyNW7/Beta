@@ -11,6 +11,7 @@ import { MapTiles } from "./models/Map";
 import * as THREE from "three";
 
 import { useGameStore } from "@/store/gameStore";
+import { MultiMonumentProximityManager } from './MultiMonumentProximityManager';
 
 const MonumentProximityManager = ({ monumentPosition, interactionDist }) => {
   const playerPosition = useGameStore((state) => state.playerPosition);
@@ -43,6 +44,16 @@ export const Experience = () => {
   const chestPosition = useGameStore((state) => state.chestPosition);
   const tuguPosition = new THREE.Vector3(1, 0, 2);
 
+  const monumentsData = [
+    { id: "tugu-center", position: new THREE.Vector3(1, 0, 2) },
+    { id: "tugu-east", position: new THREE.Vector3(5, 0, 5) },
+    { id: "tugu-west", position: new THREE.Vector3(-5, 0, 4) },
+    { id: "tugu-north", position: new THREE.Vector3(6, 0, 1) },
+    { id: "tugu-far-east", position: new THREE.Vector3(12, 0, 5) },
+    { id: "tugu-south", position: new THREE.Vector3(5, 0, 12) },
+    { id: "tugu-south-west", position: new THREE.Vector3(-5, 0, 12) },
+  ];
+
   return (
     <>
       {/* <OrbitControls /> */}
@@ -73,16 +84,27 @@ export const Experience = () => {
           WORLD_SCALE={10}
         />
         <CharacterController />
-        <Tugu scale={0.5} position={tuguPosition} />
+        {monumentsData.map((monument) => (
+          <Tugu
+            key={monument.id}
+            scale={0.5}
+            position={monument.position}
+          />
+        ))}
+        {/* <Tugu scale={0.5} position={tuguPosition} />
         <Tugu scale={0.5} position={[5,0,5]} />
         <Tugu scale={0.5} position={[-5,0,4]} />
         <Tugu scale={0.5} position={[6,0,1]} />
         <Tugu scale={0.5} position={[12,0,5]} />
         <Tugu scale={0.5} position={[5,0,12]} />
-        <Tugu scale={0.5} position={[-5,0,12]} />
+        <Tugu scale={0.5} position={[-5,0,12]} /> */}
         
-        <MonumentProximityManager
+        {/* <MonumentProximityManager
           monumentPosition={tuguPosition}
+          interactionDist={INTERACTION_DIST}
+        /> */}
+        <MultiMonumentProximityManager
+          monuments={monumentsData}
           interactionDist={INTERACTION_DIST}
         />
         {/* <ChestSpawner /> */}

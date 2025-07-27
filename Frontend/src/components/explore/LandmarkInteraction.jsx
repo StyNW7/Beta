@@ -24,16 +24,27 @@ const buttonStyle = {
   gap: '8px',
 };
 
-export const LandmarkInteraction = () => {
-  const { isNearMonument, openLandmarkModal } = useGameStore();
+// A small helper function to make the ID look nicer for display
+const formatLandmarkName = (id) => {
+  if (!id) return 'Landmark';
+  return id
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
 
-  if (!isNearMonument) {
+export const LandmarkInteraction = () => {
+  // const { isNearMonument, openLandmarkModal } = useGameStore();
+  const { closestMonument, openLandmarkModal } = useGameStore();
+
+  if (!closestMonument) {
     return null;
   }
 
   const handleClick = (e) => {
     e.stopPropagation();
-    openLandmarkModal();
+    openLandmarkModal(closestMonument);
+    console.log(closestMonument)
   };
 
   return (
@@ -42,7 +53,7 @@ export const LandmarkInteraction = () => {
       onClick={handleClick}
     >
       <Info size={20} />
-      View Landmark Info
+      Lihat Info
     </button>
   );
 };

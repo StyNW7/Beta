@@ -93,15 +93,28 @@ export default function Navbar() {
                     {item.label}
                   </a>
                 ))}
+                
                 <Button
+                  variant="outline"
                   asChild
-                  className="w-full mt-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-full"
+                  className="md:flex items-center gap-2 px-6 py-2 border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-600 rounded-full h-auto shadow-lg hover:shadow-xl transition-all duration-300"
                 >
-                  <a href="#community" onClick={() => setIsOpen(false)}>
-                    <Gamepad2 className="h-4 w-4 mr-2" />
-                    Mulai Bermain
+                  <a href="/login">
+                    <Gamepad2 className="h-4 w-4" />
+                    Masuk
                   </a>
                 </Button>
+
+                <Button
+                  asChild
+                  className="md:flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-full border-0 h-auto shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <a href="/register">
+                    <DoorOpen className="h-4 w-4" />
+                    Daftar Akun
+                  </a>
+                </Button>
+
               </nav>
             </SheetContent>
           </Sheet>

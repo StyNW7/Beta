@@ -97,12 +97,23 @@ export const useGameStore = create((set, get) => ({
   isLandmarkModalOpen: false,
   distanceToMonument: 0,
   setDistanceToMonument: (distance) => set({ distanceToMonument: distance }),
-  openLandmarkModal: () => {
-    if (get().isNearMonument) {
-      set({ isLandmarkModalOpen: true });
-    }
-  },
-  closeLandmarkModal: () => set({ isLandmarkModalOpen: false }),
+
+  // openLandmarkModal: () => {
+  //   if (get().isNearMonument) {
+  //     set({ isLandmarkModalOpen: true });
+  //   }
+  // },
+  // closeLandmarkModal: () => set({ isLandmarkModalOpen: false }),
+
+  selectedLandmark: null, // To store the data for the opened modal
+
+  // Update the function to accept data
+  openLandmarkModal: (landmarkData) => set({ 
+    isLandmarkModalOpen: true, 
+    selectedLandmark: landmarkData 
+  }),
+  
+  closeLandmarkModal: () => set({ isLandmarkModalOpen: false, selectedLandmark: null }),
 
   cameraZoomOffset: 0,
   zoomIn: () => {
@@ -118,4 +129,7 @@ export const useGameStore = create((set, get) => ({
 
   joystickVector: { x: 0, y: 0 },
   setJoystickVector: (vector) => set({ joystickVector: vector }),
+
+  closestMonument: null,
+  setClosestMonument: (monumentInfo) => set({ closestMonument: monumentInfo }),
 }));
