@@ -49,17 +49,17 @@ function MapGamePage() {
         {
             questionNumber: 1,
             imageSrc: "/Images/quizz/jam-gadang.png",
-            hint: "This iconic clock tower is located in the heart of a major Sumatran city",
+            hint: "Menara jam ikonik ini terletak di jantung kota besar Sumatera",
             correctAnswer: "Padang/Bukittinggi",
-            description: "This is the famous Jam Gadang clock tower in Bukittinggi, near Padang, West Sumatra.",
+            description: "Ini adalah Jam Gadang yang terkenal di Bukittinggi, dekat Padang, Sumatera Barat.",
             coordinates: { lat: -0.3049, lng: 100.3694 }
         },
         {
             questionNumber: 2,
             imageSrc: "/Images/quizz/tanah-lot.png",
-            hint: "This beautiful Hindu temple sits on a rock formation by the sea",
+            hint: "Pura Hindu yang indah ini berada di atas formasi batu di tepi laut",
             correctAnswer: "Bali",
-            description: "This is Tanah Lot Temple, one of Bali's most iconic landmarks.",
+            description: "Ini adalah Pura Tanah Lot, salah satu landmark paling ikonik di Bali.",
             coordinates: { lat: -8.6211, lng: 115.0868 }
         },
     ]
@@ -94,7 +94,7 @@ function MapGamePage() {
     if (currentQuestionIndex + 1 < quizData.quiz.length) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      alert("You've completed all questions!");
+      alert("Anda telah menyelesaikan semua pertanyaan!");
     }
   }
 
@@ -122,7 +122,7 @@ function MapGamePage() {
       openModal()
       setShowResult(true)
     } else {
-      alert("Please click on the map to place a temporary marker first!");
+      alert("Silakan klik pada peta untuk menempatkan marker terlebih dahulu!");
     }
   };
 
@@ -152,14 +152,14 @@ function MapGamePage() {
 
         {tempMarker && (
           <Marker position={[tempMarker.lat, tempMarker.lng]}>
-            <Popup>Clicked Marker</Popup>
+            <Popup>Marker Tebakan</Popup>
           </Marker>
         )}
 
         {showAnswer && (
           <Marker position={[answer.lat, answer.lng]} icon={customIcon}>
             <Popup>
-              This is the answer marker. <br /> You can customize this!
+              Ini adalah marker jawaban. <br /> Anda dapat menyesuaikannya!
             </Popup>
           </Marker>
         )}
@@ -178,7 +178,7 @@ function MapGamePage() {
         onClick={handleButtonClick}
         className="fixed bottom-5 right-5 px-4 py-2 bg-blue-600 text-white rounded cursor-pointer z-[1000] shadow-md text-base"
       >
-        Guess
+        Tebak
       </button>
       {/* {showLine && distanceKm !== null && (
         <div className="fixed bottom-0 left-0 w-full bg-[#222] text-white px-5 py-3 flex justify-center items-center z-[1001] shadow-[0_-2px_8px_rgba(0,0,0,0.5)] text-lg gap-4">
@@ -195,7 +195,7 @@ function MapGamePage() {
         onClick={openModal}
         className="fixed bottom-5 left-5 px-4 py-2 bg-green-600 text-white rounded cursor-pointer z-[1000] shadow-md text-base"
       >
-        See Question
+        Lihat Pertanyaan
       </button>
 
       {/* Modal */}
@@ -221,16 +221,16 @@ function MapGamePage() {
                     <div className="absolute bottom-6 right-4 w-2 h-2 bg-white/40 rounded-full"></div>
 
                     <div className="relative z-10">
-                      <h3 className="text-white text-lg font-bold mb-2">Landmark Quiz</h3>
+                      <h3 className="text-white text-lg font-bold mb-2">Kuis Landmark</h3>
                       <p className="text-red-100 text-sm">
-                        Question {currentQuestion.questionNumber} of {quizData.totalQuestions}
+                        Pertanyaan {currentQuestion.questionNumber} dari {quizData.totalQuestions}
                       </p>
                     </div>
                   </div>
 
                   <div className="p-6 space-y-6">
                     <div className="text-center">
-                      <h2 className="text-xl font-bold text-gray-900 mb-2">Where is this landmark located?</h2>
+                      <h2 className="text-xl font-bold text-gray-900 mb-2">Di mana landmark ini berada?</h2>
                       <div className="w-16 h-1 bg-gradient-to-r from-red-400 to-red-600 rounded-full mx-auto"></div>
                     </div>
 
@@ -238,14 +238,14 @@ function MapGamePage() {
                       <div className="mb-4">
                         <img 
                           src={currentQuestion.imageSrc} 
-                          alt="Location clue" 
+                          alt="Petunjuk lokasi" 
                           className="w-full h-48 object-cover rounded-xl shadow-lg"
                           onError={(e) => {
-                            e.currentTarget.src = 'https://via.placeholder.com/400x200?text=Image+Not+Found';
+                            e.currentTarget.src = 'https://via.placeholder.com/400x200?text=Gambar+Tidak+Ditemukan';
                           }}
                         />
                       </div>
-                      <p className="text-sm text-gray-600 mb-2">Study this image carefully</p>
+                      <p className="text-sm text-gray-600 mb-2">Pelajari gambar ini dengan cermat</p>
                       <div className="flex justify-center space-x-1">
                         {[...Array(5)].map((_, i) => (
                           <div
@@ -257,7 +257,7 @@ function MapGamePage() {
                     </div>
 
                     <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Hint</p>
+                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Petunjuk</p>
                       <p className="text-gray-700 text-sm leading-relaxed italic">"{currentQuestion.hint}"</p>
                     </div>
 
@@ -286,10 +286,10 @@ function MapGamePage() {
 
                     <div className="relative z-10">
                       <h3 className="text-white text-lg font-bold mb-2">
-                        {isCorrect ? "🎉 Correct!" : "❌ Incorrect"}
+                        {isCorrect ? "🎉 Benar!" : "❌ Salah"}
                       </h3>
                       <p className="text-white/90 text-sm">
-                        {isCorrect ? "Well done! You got it right." : "Don't worry, keep practicing!"}
+                        {isCorrect ? "Bagus sekali! Anda benar." : "Jangan khawatir, terus berlatih!"}
                       </p>
                     </div>
                   </div>
@@ -297,14 +297,14 @@ function MapGamePage() {
                   <div className="p-6 space-y-6">
                     <div className="text-center">
                       <h2 className="text-xl font-bold text-gray-900 mb-2">
-                        This landmark is in {currentQuestion.correctAnswer}
+                        Landmark ini berada di {currentQuestion.correctAnswer}
                       </h2>
                       <div className="w-16 h-1 bg-gradient-to-r from-red-400 to-red-600 rounded-full mx-auto"></div>
                     </div>
 
                     <div className="bg-gradient-to-r from-red-50 to-white rounded-2xl p-4 border border-red-100">
                       <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2 text-center">
-                        Your Answer
+                        Jawaban Anda
                       </p>
                       <div className="text-center">
                         <span className="text-2xl mr-2">
@@ -329,7 +329,7 @@ function MapGamePage() {
                       onClick={handleNextQuestion}
                       className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
                     >
-                      Next Question
+                      Pertanyaan Selanjutnya
                     </Button>
 
                     <div className="flex justify-center space-x-2 pt-2">
