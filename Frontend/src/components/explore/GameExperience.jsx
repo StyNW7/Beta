@@ -1,3 +1,5 @@
+
+import React from 'react'
 import { Environment, OrthographicCamera } from "@react-three/drei";
 // import { useControls } from "leva";
 import { useFrame } from "@react-three/fiber";
@@ -32,43 +34,6 @@ const MonumentProximityManager = ({ monumentPosition, interactionDist }) => {
       wasNear.current = isNowNear;
     }
   });
-  return null;
-};
-
-const ProximityManager = ({ chestPosition, interactionDist }) => {
-  const playerPosition = useGameStore((state) => state.playerPosition);
-  const setIsNearChest = useGameStore((state) => state.setIsNearChest);
-  
-  const wasNear = useRef(false);
-  const playerVec3 = useRef(new THREE.Vector3());
-
-  useFrame(() => {
-    if (!chestPosition) {
-      if (wasNear.current) {
-        setIsNearChest(false);
-        wasNear.current = false;
-      }
-      return;
-    }
-
-    if (playerPosition) {
-        playerVec3.current.set(playerPosition.x, playerPosition.y, playerPosition.z);
-    }
-    
-    const distance = playerVec3.current.distanceTo(chestPosition);
-    // console.log(`Distance to chest: ${distance.toFixed(2)}`);
-    const isNowNear = distance <= interactionDist;
-    // console.log(interactionDist);
-
-    if (isNowNear !== wasNear.current) {
-      // console.log(
-      //   `%cProximity status changed: Player is now ${isNowNear ? 'NEAR' : 'FAR'}`
-      // );
-      setIsNearChest(isNowNear);
-      wasNear.current = isNowNear;
-    }
-  });
-
   return null;
 };
 
@@ -120,7 +85,7 @@ export const Experience = () => {
           monumentPosition={tuguPosition}
           interactionDist={INTERACTION_DIST}
         />
-        <ChestSpawner />
+        {/* <ChestSpawner /> */}
       </Physics>
     </>
   );
