@@ -23,6 +23,8 @@ import LoadingScreen from "./pages/Utility/LoadingScreen";
 import LandingPage from "@/pages/Landing/page";
 import MapGamePage from "./pages/GeoCulture/page";
 
+import DemoPage from "./pages/Demo/page";
+
 function App() {
 
   const [loading, setLoading] = useState(true);
@@ -54,6 +56,7 @@ function App() {
 
             </Route>
             <Route path="/geoculture" element={<MapGamePage />} />
+            <Route path="/explore" element={<DemoPage />} />
 
           </Routes>
 
