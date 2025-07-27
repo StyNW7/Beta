@@ -6,10 +6,6 @@ import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
 
-// Layout
-
-import Layout from "@/layouts/root-layout";
-
 // Utility Pages / Components
 
 import ScrollToTop from "./utility/ScrollToTop";
@@ -46,13 +42,12 @@ function App() {
 
           <Routes>
           
-            <Route path="/" element={<Layout />}>
               
-                <Route index element={<LandingPage/>} />
+            <Route index element={<LandingPage/>} />
 
-                <Route path="*" element={<NotFoundPage />} />
+            <Route path="*" element={<NotFoundPage />} />
 
-            </Route>
+
             <Route path="/geoculture" element={<MapGamePage />} />
 
           </Routes>

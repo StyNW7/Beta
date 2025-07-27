@@ -1,118 +1,99 @@
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { Menu } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import ModeToggle from "@/components/theme-toggle"
+"use client"
 
-import { useLocation } from "react-router-dom";
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Menu, Gamepad2 } from "lucide-react"
 
 export default function Navbar() {
-
   const [isOpen, setIsOpen] = useState(false)
-  const [mounted, setMounted] = useState(false)
-  const location = useLocation();
-  const pathname = location.pathname;
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    if (isOpen) setIsOpen(false)
-  }, [pathname])
-
-  if (!mounted) return null
+  const navItems = [
+    { label: "Beranda", href: "#hero" },
+    { label: "Tentang", href: "#about" },
+    { label: "Fitur", href: "#features" },
+    { label: "Komunitas", href: "#community" },
+  ]
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 border-b border-red-100 shadow-sm">
       <div className="container flex h-16 items-center justify-between">
-        <a href="/" className="flex items-center space-x-2">
-          <motion.div
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="font-bold text-xl"
-          >
-            NW
-          </motion.div>
-        </a>
+        <div className="flex items-center gap-3">
+          <a href="/" className="flex items-center space-x-3" aria-label="Beta Indonesia Homepage">
+            <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+              <Gamepad2 className="h-6 w-6 text-white" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-2xl font-bold bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">
+                Beta Indonesia
+              </span>
+              <span className="text-xs text-red-400 -mt-1">Budaya & Permainan</span>
+            </div>
+          </a>
+        </div>
 
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex gap-8" aria-label="Main Navigation">
           {navItems.map((item, index) => (
-            <motion.div
-              key={item.href}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
+            <a
+              key={index}
+              href={item.href}
+              className="text-sm font-medium text-gray-700 hover:text-red-600 transition-colors duration-200 relative group"
             >
-              <a
-                href={item.href}
-                className={`text-sm font-medium transition-colors hover:text-primary ${
-                  pathname === item.href ? "text-foreground" : "text-muted-foreground"
-                }`}
-              >
-                {item.label}
-                {pathname === item.href && (
-                  <motion.div
-                    layoutId="navbar-indicator"
-                    className="h-0.5 bg-primary mt-1"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                )}
-              </a>
-            </motion.div>
+              {item.label}
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-red-500 to-red-600 group-hover:w-full transition-all duration-300"></span>
+            </a>
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
-          <ModeToggle />
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle menu</span>
+        <div className="flex items-center gap-4">
+          <Button
+            asChild
+            className="hidden md:flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-full border-0 h-auto shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            <a href="#community">
+              <Gamepad2 className="h-4 w-4" />
+              Mulai Bermain
+            </a>
           </Button>
+
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild className="md:hidden">
+              <Button
+                variant="outline"
+                size="icon"
+                className="border-red-200 text-red-600 hover:bg-red-50 bg-transparent"
+                aria-label="Open Menu"
+              >
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Toggle menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="bg-white">
+              <nav className="flex flex-col gap-6 mt-8" aria-label="Mobile Navigation">
+                {navItems.map((item, index) => (
+                  <a
+                    key={index}
+                    href={item.href}
+                    className="text-lg font-medium text-gray-700 hover:text-red-600 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {item.label}
+                  </a>
+                ))}
+                <Button
+                  asChild
+                  className="w-full mt-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-full"
+                >
+                  <a href="#community" onClick={() => setIsOpen(false)}>
+                    <Gamepad2 className="h-4 w-4 mr-2" />
+                    Mulai Bermain
+                  </a>
+                </Button>
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
-
-      {/* Mobile menu */}
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.3 }}
-          className="md:hidden border-b"
-        >
-          <div className="container py-4">
-            <nav className="flex flex-col gap-4">
-              {navItems.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  className={`text-sm font-medium transition-colors hover:text-primary ${
-                    pathname === item.href ? "text-foreground" : "text-muted-foreground"
-                  }`}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {item.label}
-                </a>
-              ))}
-            </nav>
-          </div>
-        </motion.div>
-      )}
     </header>
   )
 }
-
-const navItems = [
-  {
-    label: "Home",
-    href: "/",
-  },
-  {
-    label: "About",
-    href: "/about",
-  },
-]

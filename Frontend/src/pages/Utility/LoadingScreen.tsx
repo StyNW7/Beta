@@ -1,4 +1,4 @@
-import Logo from "/Images/logo.png";
+import Logo from "/Images/logo-nobg.png";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 
