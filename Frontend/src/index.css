@@ -194,3 +194,14 @@ html {
 .pulse-red {
   animation: pulse-red 2s infinite;
 }
+
+::-webkit-scrollbar-thumb{
+  background: #9333EA;
+  border-radius: 10px;
+}
+
+#canvas-container {
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+}

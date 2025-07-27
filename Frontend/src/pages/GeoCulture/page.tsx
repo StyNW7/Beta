@@ -8,9 +8,8 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Icon, latLng } from "leaflet";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Pause, Play } from "lucide-react";
 
 interface LatLngProp {
   lat: number;
@@ -42,70 +41,51 @@ const customIcon = new Icon({
 });
 
 function MapGamePage() {
-  const [answer] = useState<LatLngProp>({
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  
+  const quizData = {
+    totalQuestions: 5,
+    quiz: [
+        {
+            questionNumber: 1,
+            imageSrc: "/Images/quizz/jam-gadang.png",
+            hint: "This iconic clock tower is located in the heart of a major Sumatran city",
+            correctAnswer: "Padang/Bukittinggi",
+            description: "This is the famous Jam Gadang clock tower in Bukittinggi, near Padang, West Sumatra.",
+            coordinates: { lat: -0.3049, lng: 100.3694 }
+        },
+        {
+            questionNumber: 2,
+            imageSrc: "/Images/quizz/tanah-lot.png",
+            hint: "This beautiful Hindu temple sits on a rock formation by the sea",
+            correctAnswer: "Bali",
+            description: "This is Tanah Lot Temple, one of Bali's most iconic landmarks.",
+            coordinates: { lat: -8.6211, lng: 115.0868 }
+        },
+    ]
+  }
+  
+  const currentQuestion = quizData.quiz[currentQuestionIndex];
+  
+  // Use the current question's coordinates as the answer
+  const answer: LatLngProp = {
     id: Date.now(),
-    lat: -0.94806860577927,
-    lng: 100.36417717625399,
-  });
+    lat: currentQuestion.coordinates.lat,
+    lng: currentQuestion.coordinates.lng,
+  };
+  
   const [tempMarker, setTempMarker] = useState<LatLngProp | null>(null);
   const [showLine, setShowLine] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
   const [distanceKm, setDistanceKm] = useState<number | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-
-  const [isPlaying, setIsPlaying] = useState(false)
-//   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [showResult, setShowResult] = useState(false)
-  const audioRef = useRef<HTMLAudioElement>(null)
   const [isCorrect, setIsCorrect] = useState(false)
-
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   
-  const quizData = {
-    totalQuestions: 10,
-    quiz: [
-        {
-            questionNumber: 1,
-            audioSrc: "/audio/padang.m4a",
-            sentence: "Ambo ka pai makan sabanta lai.",
-            meaning: "I'm going out to eat soon",
-            correctAnswer: "Bahasa Minang",
-            description: "The main language spoken in Padang, the capital city of West Sumatra."
-        },
-        {
-            questionNumber: 2,
-            audioSrc: "/audio/bali.opus",
-            sentence: "Selamat pagi, apa kabar? Saya harap Anda baik-baik saja hari ini.",
-            meaning: "I want to go to the beach this afternoon.",
-            correctAnswer: "Padang",
-            description: "it is the local language in Bali."
-        }
-    ]
-  }
-//   const isCorrect = selectedAnswer === quizData.correctAnswer
-  const currentQuestion = quizData.quiz[currentQuestionIndex];
-  
-  const handlePlayAudio = () => {
-      if (audioRef.current) {
-          if (isPlaying) {
-          audioRef.current.pause()
-        setIsPlaying(false)
-    } else {
-        audioRef.current.play()
-        setIsPlaying(true)
-      }
-    }
-  }
-
-  const handleAudioEnded = () => {
-    setIsPlaying(false)
-  }
-
   const handleNextQuestion = () => {
     setModalOpen(false)
     setIsCorrect(false)
     setShowResult(false)
-    setIsPlaying(false)
     setTempMarker(null);
     setShowLine(false);
     setShowAnswer(false);
@@ -241,7 +221,7 @@ function MapGamePage() {
                     <div className="absolute bottom-6 right-4 w-2 h-2 bg-white/40 rounded-full"></div>
 
                     <div className="relative z-10">
-                      <h3 className="text-white text-lg font-bold mb-2">Language Quiz</h3>
+                      <h3 className="text-white text-lg font-bold mb-2">Landmark Quiz</h3>
                       <p className="text-red-100 text-sm">
                         Question {currentQuestion.questionNumber} of {quizData.totalQuestions}
                       </p>
@@ -250,34 +230,35 @@ function MapGamePage() {
 
                   <div className="p-6 space-y-6">
                     <div className="text-center">
-                      <h2 className="text-xl font-bold text-gray-900 mb-2">Where is this speaker from?</h2>
+                      <h2 className="text-xl font-bold text-gray-900 mb-2">Where is this landmark located?</h2>
                       <div className="w-16 h-1 bg-gradient-to-r from-red-400 to-red-600 rounded-full mx-auto"></div>
                     </div>
 
                     <div className="bg-gradient-to-r from-red-50 to-white rounded-2xl p-6 border border-red-100 text-center">
-                      <div className="flex justify-center mb-4">
-                        <Button
-                          onClick={handlePlayAudio}
-                          className="bg-red-500 hover:bg-red-600 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                        >
-                          {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
-                        </Button>
+                      <div className="mb-4">
+                        <img 
+                          src={currentQuestion.imageSrc} 
+                          alt="Location clue" 
+                          className="w-full h-48 object-cover rounded-xl shadow-lg"
+                          onError={(e) => {
+                            e.currentTarget.src = 'https://via.placeholder.com/400x200?text=Image+Not+Found';
+                          }}
+                        />
                       </div>
-                      <p className="text-sm text-gray-600 mb-2">Click to play the audio clip</p>
+                      <p className="text-sm text-gray-600 mb-2">Study this image carefully</p>
                       <div className="flex justify-center space-x-1">
                         {[...Array(5)].map((_, i) => (
                           <div
                             key={i}
-                            className={`w-1 h-4 bg-red-300 rounded-full ${isPlaying ? "animate-pulse" : ""}`}
-                            style={{ animationDelay: `${i * 100}ms` }}
+                            className="w-1 h-4 bg-red-300 rounded-full"
                           ></div>
                         ))}
                       </div>
                     </div>
 
                     <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Translation</p>
-                      <p className="text-gray-700 text-sm leading-relaxed italic">"{currentQuestion.meaning}"</p>
+                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Hint</p>
+                      <p className="text-gray-700 text-sm leading-relaxed italic">"{currentQuestion.hint}"</p>
                     </div>
 
                     <div className="flex justify-center space-x-2 pt-2">
@@ -316,12 +297,8 @@ function MapGamePage() {
                   <div className="p-6 space-y-6">
                     <div className="text-center">
                       <h2 className="text-xl font-bold text-gray-900 mb-2">
-                        {/* The speaker is from {quizData.options.find((o) => o.id === quizData.correctAnswer)?.label} */}
-                        It was the {currentQuestion.correctAnswer} language
+                        This landmark is in {currentQuestion.correctAnswer}
                       </h2>
-                      {/* <div className="text-4xl mb-2">
-                        {quizData.options.find((o) => o.id === quizData.correctAnswer)?.flag}
-                      </div> */}
                       <div className="w-16 h-1 bg-gradient-to-r from-red-400 to-red-600 rounded-full mx-auto"></div>
                     </div>
 
@@ -380,11 +357,6 @@ function MapGamePage() {
                   </div>
                 </>
               )}
-
-              <audio ref={audioRef} onEnded={handleAudioEnded} preload="metadata">
-                <source src={currentQuestion.audioSrc} type="audio/mpeg" />
-                Your browser does not support the audio element.
-              </audio>
             </div>
           </div>
         </div>
