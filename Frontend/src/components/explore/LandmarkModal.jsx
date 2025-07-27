@@ -1,7 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Calendar, MapPin, Navigation } from "lucide-react";
+import { Calendar, MapPin, Navigation, Star, ArrowRight } from "lucide-react"; // Added ArrowRight
 import { useGameStore } from "../../store/gameStore";
 import { landmarkDetails } from "../../data/monuments";
+
+// Mock data for recommendations. In a real app, this would likely come from an API.
+const recommendationsData = {
+  // Assuming selectedLandmark.id could be 'tugu_pahlawan'
+  tugu_pahlawan: [
+    { id: 'monkasel', title: 'Monumen Kapal Selam', location: 'Surabaya', imageUrl: 'https://source.unsplash.com/random/200x200?submarine' },
+    { id: 'kenjeran', title: 'Jembatan Kenjeran', location: 'Surabaya', imageUrl: 'https://source.unsplash.com/random/200x200?bridge' },
+    { id: 'sampoerna', title: 'House of Sampoerna', location: 'Surabaya', imageUrl: 'https://source.unsplash.com/random/200x200?museum' },
+  ],
+  // Default recommendations if no specific one is found
+  default: [
+    { id: 'borobudur', title: 'Candi Borobudur', location: 'Magelang', imageUrl: 'https://source.unsplash.com/random/200x200?temple' },
+    { id: 'prambanan', title: 'Candi Prambanan', location: 'Yogyakarta', imageUrl: 'https://source.unsplash.com/random/200x200?ruins' },
+  ]
+};
+
 
 const Modal = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
@@ -16,6 +32,7 @@ const Modal = ({ isOpen, onClose, children }) => {
     </div>
   );
 };
+
 const Button = ({ children, ...props }) => <button {...props}>{children}</button>;
 
 const LandmarkModal = () => {
@@ -29,12 +46,17 @@ const LandmarkModal = () => {
     selectedLandmark
   } = useGameStore();
   
-  const [showRewardView, setShowRewardView] = useState(false);
+  // State to manage which tab is active: 'details', 'review', or 'recommendations'
+  const [activeView, setActiveView] = useState('details');
+  const [rating, setRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
 
-  
   useEffect(() => {
+    // Reset to the details tab and clear review form whenever the modal is opened
     if (isLandmarkModalOpen) {
-      setShowRewardView(false);
+      setActiveView('details');
+      setRating(0);
+      setReviewText("");
     }
   }, [isLandmarkModalOpen]);
   
@@ -43,33 +65,43 @@ const LandmarkModal = () => {
   }
   
   const details = landmarkDetails[selectedLandmark.id] || landmarkDetails.default;
+  const recommendations = recommendationsData[selectedLandmark.id] || recommendationsData.default;
 
-  const handleClaimClick = () => {
-    if (!isNearMonument || !isKerisClaimable()) return;
-    claimKerisRecipe();
-    setShowRewardView(true);
-  };
-
-  const landmark = {
-    name: "Monas",
-    image: "/Images/monas.jpg",
-    description: "A historic monument representing the spirit of the nation. It is said that ancient recipes can be discovered by those who show respect.",
-    yearBuilt: "1961",
-    location: "Central Jakarta, Indonesia",
-  };
-
-  const reward = {
-    name: "Keris Recipe",
-    image: "/Images/Item/keris_recipe.png",
+  const handleReviewSubmit = () => {
+    console.log({ rating, reviewText });
+    closeLandmarkModal(); 
   };
 
   return (
     <Modal isOpen={isLandmarkModalOpen} onClose={closeLandmarkModal}>
-        <div>
-          {!showRewardView ? (
-            <div className="relative max-w-md">
-              <div className="relative overflow-hidden rounded-t-3xl">
-                <img src={details.imageUrl} alt="" className="w-full h-48 object-cover" />
+        <div className="max-w-md">
+          {/* Tab Switcher */}
+          <div className="flex border-b border-gray-200">
+            <button 
+              onClick={() => setActiveView('details')} 
+              className={`flex-1 p-4 text-xs sm:text-sm font-semibold transition-colors duration-200 ${activeView === 'details' ? 'text-red-600 border-b-2 border-red-600' : 'text-gray-500 hover:bg-gray-50'}`}
+            >
+              Deskripsi
+            </button>
+            <button 
+              onClick={() => setActiveView('review')} 
+              className={`flex-1 p-4 text-xs sm:text-sm font-semibold transition-colors duration-200 ${activeView === 'review' ? 'text-red-600 border-b-2 border-red-600' : 'text-gray-500 hover:bg-gray-50'}`}
+            >
+              Ulasan
+            </button>
+            <button 
+              onClick={() => setActiveView('recommendations')} 
+              className={`flex-1 p-4 text-xs sm:text-sm font-semibold transition-colors duration-200 ${activeView === 'recommendations' ? 'text-red-600 border-b-2 border-red-600' : 'text-gray-500 hover:bg-gray-50'}`}
+            >
+              Rekomendasi
+            </button>
+          </div>
+
+          {/* Conditional Content */}
+          {activeView === 'details' && (
+            <div>
+              <div className="relative overflow-hidden">
+                <img src={details.imageUrl} alt={details.title} className="w-full h-48 object-cover" />
               </div>
               <div className="p-6 space-y-4">
                 <div className="text-center">
@@ -89,34 +121,66 @@ const LandmarkModal = () => {
                         <p className="text-lg font-bold text-gray-900">{details.place}</p>
                     </div>
                 </div>
-                {/* <Button
-                  className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 rounded-xl shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={handleClaimClick}
-                  disabled={!isNearMonument || !isKerisClaimable()}
-                >
-                  {isKerisClaimable() ? "Get Recipe" : "Recipe Claimed Today"}
-                </Button> */}
               </div>
             </div>
-          ) : (
-            <div className="max-w-md">
-              <div className="bg-gradient-to-br from-red-500 to-red-600 p-6 text-center rounded-t-3xl">
-                  <h3 className="text-white text-lg font-bold">Recipe Unlocked!</h3>
+          )}
+          
+          {activeView === 'review' && (
+            <div className="p-6 space-y-4 animate-fade-in-up">
+              <div className="text-center">
+                <h3 className="text-xl font-bold text-gray-800">Beri Ulasan & Rating</h3>
+                <p className="text-sm text-gray-500 mt-1">Bagikan pengalamanmu di {details.title}</p>
               </div>
-              <div className="p-6 space-y-4 text-center">
-                <div className="flex justify-center">
-                    <img src={reward.image} alt="" className="w-24 h-24 object-contain"/>
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900">{reward.name}</h2>
-                <p className="text-gray-600 text-sm">A legendary recipe for crafting the mystical Keris dagger.</p>
-                <Button
-                  className="w-full bg-red-500 text-white font-semibold py-3 rounded-xl"
-                  onClick={closeLandmarkModal}
+              <div className="flex justify-center items-center space-x-2 my-4">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button key={star} onClick={() => setRating(star)}>
+                    <Star
+                      className={`h-8 w-8 transition-colors duration-200 ${rating >= star ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-300'}`}
+                      fill={rating >= star ? 'currentColor' : 'none'}
+                    />
+                  </button>
+                ))}
+              </div>
+              <div>
+                <textarea
+                  className="w-full h-28 p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-300 focus:border-red-500 transition"
+                  placeholder="Tulis ulasanmu di sini..."
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                ></textarea>
+              </div>
+              <div>
+                <Button 
+                  onClick={handleReviewSubmit}
+                  className="w-full mt-2 bg-red-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-transform transform active:scale-95"
                 >
-                  Awesome!
+                  Kirim Ulasan
                 </Button>
               </div>
             </div>
+          )}
+
+          {activeView === 'recommendations' && (
+             <div className="p-6 space-y-4 animate-fade-in-up">
+                <div className="text-center">
+                  <h3 className="text-xl font-bold text-gray-800">Rekomendasi Selanjutnya</h3>
+                  <p className="text-sm text-gray-500 mt-1">Berdasarkan AI kami</p>
+                </div>
+                <div className="space-y-3 pt-2">
+                  {recommendations.map(place => (
+                    <a href="#" key={place.id} className="flex items-center space-x-4 bg-gray-50 hover:bg-red-50 rounded-xl p-3 border border-gray-200 hover:border-red-200 transition-all duration-200 group">
+                      <img src={place.imageUrl} alt={place.title} className="w-16 h-16 object-cover rounded-lg" />
+                      <div className="flex-grow">
+                        <h4 className="font-bold text-gray-800 group-hover:text-red-600">{place.title}</h4>
+                        <p className="text-sm text-gray-500">{place.location}</p>
+                      </div>
+                      <div className="p-2 text-gray-400 group-hover:text-red-600 transition-colors">
+                        <ArrowRight className="h-5 w-5" />
+                      </div>
+                    </a>
+                  ))}
+                </div>
+             </div>
           )}
         </div>
     </Modal>
