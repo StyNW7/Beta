@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
-import { Eye, EyeOff, Mail, Lock, Gamepad2, ArrowRight, Sparkles } from "lucide-react"
+import { Eye, EyeOff, Mail, Lock, Gamepad2, ArrowRight, Sparkles, Home } from "lucide-react"
 
 export default function LoginPage() {
 
@@ -140,7 +140,7 @@ export default function LoginPage() {
             </motion.div>
           </motion.div>
 
-          <Button
+          {/* <Button
             className="w-60 h-12 bg-white text-red-500 rounded-xl font-semibold text-lg hover:bg-white hover:text-red-500 active:scale-100 shadow-lg transition-all duration-300 transform hover:scale-[1.02] mt-7"
           >
             <a href="/">
@@ -149,7 +149,7 @@ export default function LoginPage() {
                 <ArrowRight className="h-5 w-5" />
               </div>
             </a>
-          </Button>
+          </Button> */}
 
         </div>
       </div>
@@ -273,8 +273,23 @@ export default function LoginPage() {
                       </div>
                     )}
                   </Button>
+
+                  
+
                 </motion.div>
               </form>
+
+              <Button
+                variant="outline"
+                className="w-full h-12 border-2 border-red-500 bg-white/10 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-600 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] mt-2"
+              >
+                <a href="/">
+                  <div className="flex items-center gap-2">
+                    Kembali ke Beranda
+                    <Home className="h-5 w-5" />
+                  </div>
+                </a>
+              </Button>
 
               <motion.div
                 initial={{ opacity: 0 }}
