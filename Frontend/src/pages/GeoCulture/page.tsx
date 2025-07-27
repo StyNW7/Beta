@@ -10,6 +10,7 @@ import "leaflet/dist/leaflet.css";
 import { Icon, latLng } from "leaflet";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import FloatingMenuButton from "@/components/geoculture/MenuButton";
 
 interface LatLngProp {
   lat: number;
@@ -176,7 +177,7 @@ function MapGamePage() {
 
       <button
         onClick={handleButtonClick}
-        className="fixed bottom-5 right-5 px-4 py-2 bg-blue-600 text-white rounded cursor-pointer z-[1000] shadow-md text-base"
+        className="fixed bottom-[70px] left-5 px-4 py-2 bg-blue-600 text-white rounded cursor-pointer z-[1000] shadow-md text-base"
       >
         Tebak
       </button>
@@ -361,6 +362,7 @@ function MapGamePage() {
           </div>
         </div>
       )}
+      <FloatingMenuButton />
     </div>
   );
 }
