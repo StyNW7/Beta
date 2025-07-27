@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
-import { Mail, ArrowLeft, Gamepad2, Shield, Clock, CheckCircle } from "lucide-react"
+import { Mail, ArrowLeft, Gamepad2, Shield, Clock, CheckCircle, ArrowRight } from "lucide-react"
 
 export default function ResetPasswordPage() {
   const [isLoading, setIsLoading] = useState(false)
@@ -153,6 +153,18 @@ export default function ResetPasswordPage() {
               <p className="text-red-100 text-sm">Dipercaya oleh 10,000+ pengguna di seluruh Indonesia</p>
             </motion.div>
           </motion.div>
+
+          <Button
+            className="w-60 h-12 bg-white text-red-500 rounded-xl font-semibold text-lg hover:bg-white hover:text-red-500 active:scale-100 shadow-lg transition-all duration-300 transform hover:scale-[1.02] mt-7"
+          >
+            <a href="/">
+              <div className="flex items-center gap-2">
+                Kembali ke Beranda
+                <ArrowRight className="h-5 w-5" />
+              </div>
+            </a>
+          </Button>
+
         </div>
       </div>
 

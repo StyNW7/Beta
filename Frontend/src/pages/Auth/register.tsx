@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Eye, EyeOff, Mail, Lock, User, Phone, Gamepad2, ArrowRight, Sparkles, Trophy, Users } from "lucide-react"
 
 export default function RegisterPage() {
+
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -177,6 +178,18 @@ export default function RegisterPage() {
               ))}
             </motion.div>
           </motion.div>
+
+          <Button
+            className="w-60 h-12 bg-white text-red-500 rounded-xl font-semibold text-lg hover:bg-white hover:text-red-500 active:scale-100 shadow-lg transition-all duration-300 transform hover:scale-[1.02] mt-7"
+          >
+            <a href="/">
+              <div className="flex items-center gap-2">
+                Kembali ke Beranda
+                <ArrowRight className="h-5 w-5" />
+              </div>
+            </a>
+          </Button>
+
         </div>
       </div>
 

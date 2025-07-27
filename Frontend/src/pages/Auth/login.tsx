@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Eye, EyeOff, Mail, Lock, Gamepad2, ArrowRight, Sparkles } from "lucide-react"
 
 export default function LoginPage() {
+
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
@@ -138,6 +139,18 @@ export default function LoginPage() {
               <p className="text-lg italic text-red-100">"Bermain, Belajar, Melestarikan Budaya Bersama"</p>
             </motion.div>
           </motion.div>
+
+          <Button
+            className="w-60 h-12 bg-white text-red-500 rounded-xl font-semibold text-lg hover:bg-white hover:text-red-500 active:scale-100 shadow-lg transition-all duration-300 transform hover:scale-[1.02] mt-7"
+          >
+            <a href="/">
+              <div className="flex items-center gap-2">
+                Kembali ke Beranda
+                <ArrowRight className="h-5 w-5" />
+              </div>
+            </a>
+          </Button>
+
         </div>
       </div>
 

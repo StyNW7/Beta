@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Gamepad2 } from "lucide-react"
+import { Menu, Gamepad2, DoorOpen } from "lucide-react"
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -20,14 +20,15 @@ export default function Navbar() {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-3">
           <a href="/" className="flex items-center space-x-3" aria-label="Beta Indonesia Homepage">
-            <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
-              <Gamepad2 className="h-6 w-6 text-white" />
+            
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center">
+              <img src="/Images/logo-nobg.png" alt="Heart Icon" className="w-14 h-14" />
             </div>
+
             <div className="flex flex-col">
               <span className="text-2xl font-bold bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">
                 Beta Indonesia
               </span>
-              <span className="text-xs text-red-400 -mt-1">Budaya & Permainan</span>
             </div>
           </a>
         </div>
@@ -46,13 +47,25 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-4">
+
+          <Button
+            variant="outline"
+            asChild
+            className="hidden md:flex items-center gap-2 px-6 py-2 border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-600 rounded-full h-auto shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            <a href="/login">
+              <Gamepad2 className="h-4 w-4" />
+              Masuk
+            </a>
+          </Button>
+
           <Button
             asChild
             className="hidden md:flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-full border-0 h-auto shadow-lg hover:shadow-xl transition-all duration-300"
           >
-            <a href="#community">
-              <Gamepad2 className="h-4 w-4" />
-              Mulai Bermain
+            <a href="/register">
+              <DoorOpen className="h-4 w-4" />
+              Daftar Akun
             </a>
           </Button>
 
