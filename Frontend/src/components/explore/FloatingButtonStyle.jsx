@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
-import { Menu, Home, User, Settings, Trophy, MapPin, Camera, X } from 'lucide-react';
+import { Menu, Home, User, MapPin, X } from 'lucide-react';
 
 const FloatingMenuButton = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menuItems = [
-    { id: 'home', icon: Home, label: 'Home', description: 'Go to home screen', href: '/' },
-    { id: 'profile', icon: User, label: 'Profile', description: 'View your profile', href: '/dashboard' },
-    { id: 'map', icon: MapPin, label: 'Map', description: 'Explore the map', href: '/map' },
-    { id: 'camera', icon: Camera, label: 'Camera', description: 'Take a photo', href: '/camera' },
-    { id: 'achievements', icon: Trophy, label: 'Achievements', description: 'View your achievements', href: '/achievements' },
-    { id: 'settings', icon: Settings, label: 'Settings', description: 'App settings', href: '/settings' },
+    { id: 'home', icon: Home, label: 'Beranda', description: 'Kembali ke beranda', href: '/' },
+    { id: 'profile', icon: User, label: 'Fitur', description: 'Lihat semua fitur', href: '/start' },
   ];
 
   const handleMenuItemClick = (item) => {
