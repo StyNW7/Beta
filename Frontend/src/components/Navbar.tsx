@@ -9,10 +9,11 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
 
   const navItems = [
-    { label: "Beranda", href: "#hero" },
-    { label: "Tentang", href: "#about" },
-    { label: "Fitur", href: "#features" },
-    { label: "Komunitas", href: "#community" },
+    { label: "Beranda", href: "/" },
+    { label: "Fitur", href: "/start" },
+    { label: "Geoculture", href: "/geoculture" },
+    { label: "Jelajahi", href: "/explore" },
+    { label: "Peringkat", href: "/leaderboard" },
   ]
 
   return (
