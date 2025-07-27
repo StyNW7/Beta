@@ -44,9 +44,7 @@ function App() {
         {!loading && (
 
           <Routes>
-
-            
-
+          
             <Route path="/" element={<Layout />}>
               
                 <Route index element={<LandingPage/>} />
