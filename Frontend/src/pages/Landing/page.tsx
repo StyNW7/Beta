@@ -449,7 +449,7 @@ export default function Home() {
       {/* Community and CTA Section */}
       <section
         id="community"
-        className="py-20 bg-gradient-to-br from-red-500 via-red-600 to-red-500 text-white relative overflow-hidden"
+        className="py-20 bg-gradient-to-br from-red-600 via-red-700 to-red-600 text-white relative overflow-hidden"
       >
         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=60 height=60 viewBox=0 0 60 60 xmlns=http://www.w3.org/2000/svg%3E%3Cg fill=none fillRule=evenodd%3E%3Cg fill=%23ffffff fillOpacity=0.1%3E%3Ccircle cx=30 cy=30 r=2/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
 
