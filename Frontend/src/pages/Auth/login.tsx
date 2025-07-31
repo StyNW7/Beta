@@ -9,24 +9,36 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { Eye, EyeOff, Mail, Lock, Gamepad2, ArrowRight, Sparkles, Home } from "lucide-react"
+import { useUserStore } from "@/store/userStore"
+import { useNavigate } from "react-router"
+import { toast } from "sonner"
 
 export default function LoginPage() {
-
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   })
+  const login = useUserStore((state) => state.login);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    // Simulate API call
-    setTimeout(() => {
+
+    try {
+      await login(formData);
+      toast("login successfull")
+      setTimeout(() => {
+        setIsLoading(false)
+        navigate("/")
+      }, 2000)
+    } catch (error) {
+      console.error("Login failed:", error);
       setIsLoading(false)
-      // Handle login logic here
-    }, 2000)
+      toast("login failed")
+    }
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
