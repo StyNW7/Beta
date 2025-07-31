@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Calendar, MapPin, Navigation, Star, ArrowRight } from "lucide-react"; // Added ArrowRight
 import { useGameStore } from "../../store/gameStore";
 import { landmarkDetails } from "../../data/monuments";
+import axios from "axios";
 
 // Mock data for recommendations. In a real app, this would likely come from an API.
 const recommendationsData = {
@@ -39,10 +40,6 @@ const LandmarkModal = () => {
   const { 
     isLandmarkModalOpen, 
     closeLandmarkModal, 
-    isNearMonument, 
-    distanceToMonument,
-    claimKerisRecipe,
-    isKerisClaimable,
     selectedLandmark
   } = useGameStore();
   
@@ -50,6 +47,7 @@ const LandmarkModal = () => {
   const [activeView, setActiveView] = useState('details');
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
+  const [landmark, setLandmark] = useState([]);
 
   useEffect(() => {
     // Reset to the details tab and clear review form whenever the modal is opened
@@ -59,12 +57,33 @@ const LandmarkModal = () => {
       setReviewText("");
     }
   }, [isLandmarkModalOpen]);
-  
+
+  useEffect(() => {
+  if (!selectedLandmark?._id) return;
+
+  const getLandmarkDetail = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/landmark/${selectedLandmark._id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+      setLandmark(response.data);
+      console.log(response.data)
+    } catch (error) {
+      console.error('Error fetching landmarks:', error);
+    }
+  };
+
+  getLandmarkDetail();
+}, [selectedLandmark]);
+
   if (!isLandmarkModalOpen || !selectedLandmark) {
     return null;
   }
-  
-  const details = landmarkDetails[selectedLandmark.id] || landmarkDetails.default;
+
+  // const details = landmarkDetails[selectedLandmark.id] || landmarkDetails.default;
   const recommendations = recommendationsData[selectedLandmark.id] || recommendationsData.default;
 
   const handleReviewSubmit = () => {
@@ -101,24 +120,24 @@ const LandmarkModal = () => {
           {activeView === 'details' && (
             <div>
               <div className="relative overflow-hidden">
-                <img src={details.imageUrl} alt={details.title} className="w-full h-48 object-cover" />
+                <img src={landmark.image} alt={landmark.name} className="w-full h-48 object-cover" />
               </div>
               <div className="p-6 space-y-4">
                 <div className="text-center">
-                  <h2 className="text-2xl font-bold text-gray-900">{details.title}</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">{landmark.name}</h2>
                   <div className="w-16 h-1 bg-gradient-to-r from-red-400 to-red-600 rounded-full mx-auto mt-2"></div>
                 </div>
                 <div className="bg-red-50 rounded-xl p-4 border border-red-100">
-                  <p className="text-gray-700 text-sm">{details.description}</p>
+                  <p className="text-gray-700 text-sm">{landmark.description}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-3 text-center">
                     <div>
                         <p className="text-xs font-medium text-gray-500">TAHUN</p>
-                        <p className="text-lg font-bold text-gray-900">{details.year}</p>
+                        <p className="text-lg font-bold text-gray-900">{landmark.yearBuilt}</p>
                     </div>
                     <div>
                         <p className="text-xs font-medium text-gray-500">LOKASI</p>
-                        <p className="text-lg font-bold text-gray-900">{details.place}</p>
+                        <p className="text-lg font-bold text-gray-900">{landmark.city}</p>
                     </div>
                 </div>
               </div>
@@ -129,7 +148,7 @@ const LandmarkModal = () => {
             <div className="p-6 space-y-4 animate-fade-in-up">
               <div className="text-center">
                 <h3 className="text-xl font-bold text-gray-800">Beri Ulasan & Rating</h3>
-                <p className="text-sm text-gray-500 mt-1">Bagikan pengalamanmu di {details.title}</p>
+                <p className="text-sm text-gray-500 mt-1">Bagikan pengalamanmu di {landmark.name}</p>
               </div>
               <div className="flex justify-center items-center space-x-2 my-4">
                 {[1, 2, 3, 4, 5].map((star) => (

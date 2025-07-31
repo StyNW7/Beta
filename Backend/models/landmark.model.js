@@ -11,7 +11,7 @@ const landmarkSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    images: {
+    image: {
       type: String,
       required: false,
     },
@@ -22,6 +22,11 @@ const landmarkSchema = new mongoose.Schema(
     yearBuilt: {
       type: String,
       required: false,
+    },
+    position: {
+      x: { type: Number, required: true },
+      y: { type: Number, required: true },
+      z: { type: Number, required: true },
     },
   },
   {

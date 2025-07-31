@@ -84,6 +84,7 @@ export const landmarkDetails = {
   "tugu-south-west": {
     title: "Tana Toraja",
     description: "Tana Toraja di Sulawesi Selatan dikenal dengan upacara pemakaman yang rumit, makam tebing, dan rumah adat Tongkonan yang berbentuk perahu.",
+    imageUrl: "/Images/landmarks/tana-toraja.jpg",
     year: 1800,
     place: "Tana Toraja"
   },

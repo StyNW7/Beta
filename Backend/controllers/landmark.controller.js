@@ -14,3 +14,20 @@ export const getAllLandmarks = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const getLandmarkById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const landmark = await Landmark.findById(id);
+
+    if (!landmark) {
+      return res.status(404).json({ message: "Landmark not found" });
+    }
+
+    res.status(200).json(landmark);
+  } catch (error) {
+    console.error(`Error fetching landmark with ID ${id}:`, error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

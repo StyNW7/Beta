@@ -41,7 +41,7 @@ export const MultiMonumentProximityManager = ({ monuments, interactionDist }) =>
     let newClosestMonumentInfo = null;
     if (closestMon && closestDist <= interactionDist) {
         newClosestMonumentInfo = {
-            id: closestMon.id,
+            _id: closestMon._id,
             position: closestMon.position,
             distance: closestDist,
         };

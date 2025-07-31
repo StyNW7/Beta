@@ -29,7 +29,7 @@ export default function LoginPage() {
 
     try {
       await login(formData);
-      toast("login successfull")
+      toast("Login berhasil")
       setTimeout(() => {
         setIsLoading(false)
         navigate("/")
@@ -37,7 +37,7 @@ export default function LoginPage() {
     } catch (error) {
       console.error("Login failed:", error);
       setIsLoading(false)
-      toast("login failed")
+      toast("Login gagal")
     }
   }
 
