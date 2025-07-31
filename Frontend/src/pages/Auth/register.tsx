@@ -11,6 +11,9 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Eye, EyeOff, Mail, Lock, User, Phone, Gamepad2, ArrowRight, Sparkles, Trophy, Users } from "lucide-react"
+import { registerUser } from "@/services/authService"
+import { toast } from "sonner"
+import { useNavigate } from "react-router"
 
 export default function RegisterPage() {
 
@@ -18,7 +21,7 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
-    fullName: "",
+    username: "",
     email: "",
     phone: "",
     age: "",
@@ -27,14 +30,47 @@ export default function RegisterPage() {
     agreeTerms: false,
   })
 
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const navigate = useNavigate();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
-      // Handle registration logic here
-    }, 2000)
+    setError(null);
+    setSuccess(null);
+
+    const {
+      username,
+      email,
+      password,
+    } = formData;
+
+    const dataToSend = {
+      username,
+      email,
+      password,
+    };
+    
+    try {
+      const response = await registerUser(dataToSend);
+      setSuccess(response.message);
+      console.log(success)
+      toast(success)
+      setTimeout(() => {
+        setIsLoading(false)
+        navigate("/login")
+      }, 2000)
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err.message);
+        setError(err.message);
+        toast(error)
+      } else {
+        console.error("An unexpected error occurred.");
+      }
+    }
+    setIsLoading(false)
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -227,17 +263,17 @@ export default function RegisterPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.1 }}
                 >
-                  <Label htmlFor="fullName" className="text-gray-700 font-medium">
+                  <Label htmlFor="username" className="text-gray-700 font-medium">
                     Nama Lengkap
                   </Label>
                   <div className="relative mt-2">
                     <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <Input
-                      id="fullName"
-                      name="fullName"
+                      id="username"
+                      name="username"
                       type="text"
                       required
-                      value={formData.fullName}
+                      value={formData.username}
                       onChange={handleInputChange}
                       className="pl-10 h-12 border-gray-200 focus:border-red-500 focus:ring-red-500 rounded-xl"
                       placeholder="Masukkan nama lengkap"
