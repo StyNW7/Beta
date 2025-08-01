@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
 import router from "./routes/routes.js";
 import cors from "cors";
+import { setupSocket } from "./socket.js";
+import http from "http";
 
 dotenv.config();
 
@@ -20,9 +22,16 @@ app.use(
 
 app.use("/api", router);
 
+const server = http.createServer(app);
+
+setupSocket(server);
+
 connectDB()
   .then(() => {
-    app.listen(port, () => {
+    // app.listen(port, () => {
+    //   console.log(`Server running on http://localhost:${port}`);
+    // });
+    server.listen(port, () => {
       console.log(`Server running on http://localhost:${port}`);
     });
   })

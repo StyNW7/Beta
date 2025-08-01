@@ -11,7 +11,7 @@ export default function Navbar() {
   const navItems = [
     { label: "Beranda", href: "/" },
     { label: "Fitur", href: "/start" },
-    { label: "Geoculture", href: "/geoculture" },
+    { label: "Geoculture", href: "/geoculture-lobby" },
     { label: "Jelajahi", href: "/explore" },
     { label: "Peringkat", href: "/leaderboard" },
   ]

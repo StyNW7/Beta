@@ -24,13 +24,14 @@ import LoginPage from "./pages/Auth/login";
 // Pages
 
 import LandingPage from "@/pages/Landing/page";
-import MapGamePage from "./pages/GeoCulture/page";
+import MapGamePage from "./pages/GeoCulture/MapGamePage";
 
 // @ts-ignore
 import DemoPage from "./pages/Demo/page";
 import NavigationPage from "./pages/Start/page";
 import LeaderboardPage from "./pages/Leaderboard/page";
 import WajahBudayaPage from "./pages/WajahBudaya/page";
+import GeoCulturePage from "./pages/GeoCulture/page";
 
 function App() {
 
@@ -65,6 +66,7 @@ function App() {
 
             <Route path="/start" element={<NavigationPage />} />
             <Route path="/geoculture" element={<MapGamePage />} />
+            <Route path="/geoculture-lobby" element={<GeoCulturePage />} />
             <Route path="/explore" element={<DemoPage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/wajah-budaya" element={<WajahBudayaPage />} />
