@@ -16,7 +16,7 @@ export const uploadAvatar = async (req, res) => {
     }
 
     const { originalname, mimetype, buffer, size } = req.file;
-    const { description } = req.body; // REMOVED category
+    const { description } = req.body;
 
     // Validate image file
     try {
@@ -90,6 +90,7 @@ export const getFileById = async (req, res) => {
         }
 
         const objectId = new mongoose.mongo.ObjectId(fileId);
+        const gridfsBucket = getbucket();
 
         // Find file info
         const files = await gridfsBucket.find({ _id: objectId }).toArray();
@@ -151,17 +152,19 @@ export const deleteFile = async (req, res) => {
       return res.status(400).json({ message: "Invalid file ID" });
     }
 
-    // Find the avatar record first
     const avatar = await Avatar.findOne({ fileId: fileId });
     
     if (!avatar) {
       return res.status(404).json({ message: "Avatar not found" });
     }
 
-    // Check if user owns the avatar or is admin
     if (avatar.userId.toString() !== req.user.userId && req.user.role !== 'admin') {
       return res.status(403).json({ message: "Not authorized to delete this file" });
     }
+
+    // Check if this is the user's main avatar
+    const user = await User.findById(avatar.userId);
+    const isMainAvatar = user.main_avatar?.toString() === avatar._id.toString();
 
     // Delete from GridFS
     await deleteFileFromGridFS(fileId);
@@ -174,8 +177,19 @@ export const deleteFile = async (req, res) => {
       avatar.userId,
       { $pull: { avatar_collection: avatar._id } }
     );
+
+    // If deleted avatar was main avatar, clear main_avatar field
+    if (isMainAvatar) {
+      await User.findByIdAndUpdate(
+        avatar.userId,
+        { main_avatar: null }
+      );
+    }
     
-    res.status(200).json({ message: "File deleted successfully" });
+    res.status(200).json({ 
+      message: "File deleted successfully",
+      wasMainAvatar: isMainAvatar
+    });
 
   } catch (error) {
     console.error("Delete file error:", error);
@@ -187,7 +201,6 @@ export const deleteFile = async (req, res) => {
  * Get all files uploaded by the current user
  * @route GET /api/files/my-files
  * @param {string} req.user.userId - ID of the authenticated user
- * @param {string} [req.query.category] - Optional filter by file category
  * @param {string} [req.query.fileType] - Optional filter by file type
  * @access Private
  */

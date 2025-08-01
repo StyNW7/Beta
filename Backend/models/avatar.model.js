@@ -43,7 +43,6 @@ const avatarSchema = new mongoose.Schema({
 
 // Compound index for efficient queries
 avatarSchema.index({ userId: 1, isActive: 1 });
-avatarSchema.index({ userId: 1, category: 1 });
 
 // Virtual for image URL
 avatarSchema.virtual('imageUrl').get(function() {

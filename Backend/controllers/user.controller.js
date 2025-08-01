@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import Avatar from "../models/avatar.model.js";
+import mongoose from "mongoose";
 
 export const getUserProfile = async (req, res) => {
   try {
@@ -9,7 +10,9 @@ export const getUserProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.status(200).json(user);
+    const userResponse = user.toObject({virtuals: true});
+
+    res.status(200).json(userResponse);
   } catch (error) {
     console.error("Error fetching user profile:", error);
     res.status(500).json({ message: "Server error" });
@@ -18,9 +21,8 @@ export const getUserProfile = async (req, res) => {
 
 export const getUserAvatarCollections = async (req, res) => {
   try {
-    const { page = 1, limit = 20 } = req.query; // REMOVED category parameter
+    const { page = 1, limit = 20 } = req.query;
     
-    // Build query (REMOVED category filter)
     const query = { 
       userId: req.user.userId, 
       isActive: true 
@@ -35,7 +37,6 @@ export const getUserAvatarCollections = async (req, res) => {
 
     const total = await Avatar.countDocuments(query);
 
-    // Format response (REMOVED category references)
     const avatarsWithUrls = avatars.map(avatar => ({
       id: avatar._id,
       fileId: avatar.fileId,
@@ -58,6 +59,49 @@ export const getUserAvatarCollections = async (req, res) => {
 
   } catch (error) {
     console.error("Error fetching avatar collections:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+/**
+ * Set an avatar as the main/default avatar
+ * @route PUT /api/user/main-avatar/:avatarId
+ * @access Private
+ */
+export const setMainAvatar = async (req, res) => {
+  try {
+    const { avatarId } = req.params;
+    const userId = req.user.userId;
+
+    // Validate avatar ID
+    if (!mongoose.Types.ObjectId.isValid(avatarId)) {
+      return res.status(400).json({ message: "Invalid avatar ID" });
+    }
+
+    // Check if avatar exists and belongs to user
+    const avatar = await Avatar.findOne({ _id: avatarId, userId: userId });
+    if (!avatar) {
+      return res.status(404).json({ message: "Avatar not found or doesn't belong to user" });
+    }
+
+    // Update user's main avatar
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { main_avatar: avatarId },
+      { new: true }
+    ).populate('main_avatar');
+
+    res.status(200).json({
+      message: "Main avatar updated successfully",
+      mainAvatar: {
+        id: updatedUser.main_avatar._id,
+        originalName: updatedUser.main_avatar.originalName,
+        imageUrl: `/api/files/${updatedUser.main_avatar.fileId}`,
+      }
+    });
+
+  } catch (error) {
+    console.error("Error setting main avatar:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
