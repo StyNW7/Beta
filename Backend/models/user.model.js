@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     default: "user",
   },
+  avatar_collection: [{ 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Avatar"
+  }],
 });
 
 userSchema.pre("save", async function (next) {
