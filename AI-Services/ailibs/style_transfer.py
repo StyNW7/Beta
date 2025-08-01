@@ -44,7 +44,6 @@ def encode_image_to_base64(image:Image.Image)->str:
 
 
 # Main model inferencing functions
-
 def style_trans(content_image_b64:str, style_image_b64:str) -> Dict[Union[str,None], str]:
     try:
         content_image = decode_base64_image(content_image_b64)
@@ -66,5 +65,4 @@ def style_trans(content_image_b64:str, style_image_b64:str) -> Dict[Union[str,No
         return {"stylized_image": output_image_base64, "error":None}
 
     except Exception as e:
-        print(f"An error occurred: {e}")
         return { "stylized_image":None, "error": "An internal error occurred during image generation."}
