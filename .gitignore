@@ -1,2 +1,7 @@
 .env*
 node_modules/
+
+# Ignores vpp backup and lock files
+
+*.vpp.bak_*
+*.vpp.lck
