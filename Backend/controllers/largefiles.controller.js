@@ -137,6 +137,91 @@ export const uploadTemplate = async (req,res) => {
 }
 
 /**
+ * Edit/Update image metadata (originalName and description)
+ * @route PUT /api/files/edit/:id
+ * @description Allows users to update the original filename and description of their uploaded images.
+ *              Only the image owner or admin can perform this operation.
+ * @access Private
+ * @param {string} req.params.id - The GridFS file ID of the image to edit
+ * @param {string} req.user.userId - ID of the authenticated user (from JWT token)
+ * @param {string} req.user.role - Role of the authenticated user (for admin check)
+ * @param {Object} req.body - Request body containing update fields
+ * @param {string} [req.body.originalName] - New filename for the image (optional)
+ * @param {string} [req.body.description] - New description for the image (optional)
+ * @returns {Object} JSON response with updated image information
+ * @returns {string} returns.message - Success/error message
+ * @returns {Object} returns.avatar - Updated image object
+ * @returns {string} returns.avatar.id - MongoDB document ID
+ * @returns {string} returns.avatar.fileId - GridFS file ID
+ * @returns {string} returns.avatar.originalName - Updated filename
+ * @returns {string} returns.avatar.description - Updated description
+ * @throws {400} Invalid file ID format
+ * @throws {403} User not authorized to edit this image
+ * @throws {404} Image not found
+ * @throws {500} Server error during update operation
+ * @example
+ * // Request body
+ * {
+ *   "originalName": "my_updated_avatar.png",
+ *   "description": "Updated description for my profile picture"
+ * }
+ * 
+ * // Success response
+ * {
+ *   "message": "Image renamed successfully",
+ *   "avatar": {
+ *     "id": "507f1f77bcf86cd799439011",
+ *     "fileId": "507f1f77bcf86cd799439012",
+ *     "originalName": "my_updated_avatar.png",
+ *     "description": "Updated description for my profile picture"
+ *   }
+ * }
+ */
+export const editAvatarInfo = async (req,res) => {
+  try {
+    const fileId = req.params.id;
+      
+    if (!mongoose.Types.ObjectId.isValid(fileId)) {
+      return res.status(400).json({ message: "Invalid file ID" });
+    }
+
+    const avatar = await Images.findOne({ fileId: fileId });
+    
+    if (!avatar) {
+      return res.status(404).json({ message: "Avatar not found" });
+    }
+
+    if (avatar.userId.toString() !== req.user.userId && req.user.role !== 'admin') {
+      return res.status(403).json({ message: "Not authorized to rename this file" });
+    }
+
+    const updatedAvatar = await Images.findByIdAndUpdate(
+      avatar._id,
+      { 
+        originalName: req.body.originalName ? req.body.originalName : avatar.originalName,
+        description: req.body.description ? req.body.description : avatar.description
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      message: "Image renamed successfully",
+      avatar: {
+        id: updatedAvatar._id,
+        fileId: updatedAvatar.fileId,
+        originalName: updatedAvatar.originalName,
+        description: updatedAvatar.description,
+      },
+    });
+
+  } catch (error) {
+    console.error("Rename image error:", error);
+    res.status(500).json({ message: "Failed to rename image" });
+  }
+}
+
+
+/**
  * Get file by ID (serves the actual file)
  * @route GET /api/files/:id
  * @param {string} req.params.id - The file ID to retrieve

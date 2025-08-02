@@ -5,6 +5,7 @@ from io import BytesIO
 from diffusers import AutoPipelineForImage2Image
 import torch_directml
 from typing import Dict, Union
+import re
 
 pipe = None
 
@@ -42,9 +43,19 @@ def encode_image_to_base64(image:Image.Image)->str:
     image.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode('utf-8')
 
+def is_valid_base64(s:str)->bool:
+    try:
+        # Check if it's a valid base64 string
+        if isinstance(s, str) and re.match(r'^[A-Za-z0-9+/]*={0,2}$', s):
+            base64.b64decode(s, validate=True)
+            return True
+        return False
+    except:
+        return False
+
 
 # Main model inferencing functions
-def style_trans(content_image_b64:str, style_image_b64:str, influence:float, creativity:float) -> Dict[Union[str,None], str]:
+def style_trans(content_image_b64:str, style_image_b64:str, influence:float, creativity:float) -> Dict[str, Union[Image.Image, str, None]]:
     try:
         content_image = decode_base64_image(content_image_b64)
         style_image = decode_base64_image(style_image_b64)
@@ -52,24 +63,21 @@ def style_trans(content_image_b64:str, style_image_b64:str, influence:float, cre
         # Run inference
         # The model works best if you provide a simple prompt
         image = pipe(
-            prompt="a profile picture or avatar, fun, artistic, represent indonesian culture, traditional, art, ",
+            prompt="a profile picture or avatar, fun, artistic, represent indonesian culture, traditional, art, fit for poster, good for instagram",
             image=content_image,
             style_image=style_image,
             strength=influence, # How much to stylize, 0.0-1.0
             guidance_scale=creativity, # 1-15 (less is more artistic, while higher closer to the prompt)
 
-            negative_prompt="watermark, lowres, low quality, worst quality, deformed, glitch, low contrast, noisy, saturation, blurry",  # What to avoid
+            negative_prompt="watermark, lowres, low quality, worst quality, deformed, glitch, low contrast, noisy, saturation, blurry, boring, too formal",  # What to avoid
             num_inference_steps=20,  # 10-50 (more steps = higher quality but slower)
             width=512,  # Output width
             height=512,  # Output height
             num_images_per_prompt=1,  # Generate multiple variations
             generator=torch.Generator().manual_seed(torch.randint(0, 2**32, (1,)).item()),  # For random results
         ).images[0]
-        
-        # Encode the output image to Base64 to send in the response
-        output_image_base64 = encode_image_to_base64(image)
 
-        return {"stylized_image": output_image_base64, "error":None}
+        return {"stylized_image": image, "error":None}
 
-    except Exception as e:
+    except Exception:
         return { "stylized_image":None, "error": "An internal error occurred during image generation."}

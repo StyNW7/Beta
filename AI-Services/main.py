@@ -5,9 +5,20 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+import requests
+from io import BytesIO
+from ailibs.style_transfer import style_trans, is_valid_base64, model_load
 
 app = Flask(__name__)
 CORS(app)
+
+# Load model
+print("Loading AI style transfer model...")
+try:
+    model_load()
+    print("✅ AI model loaded successfully!")
+except Exception as e:
+    print(f"❌ Failed to load AI model: {e}")
 
 @app.route('/')
 def home():
@@ -72,6 +83,103 @@ def recommend():
         return jsonify({"error": f"No recommendations found for place '{place_name}'"}), 404
 
     return jsonify(results)
+
+@app.route('/style-transfer', methods=['POST'])
+def stytrans():
+    try:
+        user_token = request.headers.get('Authorization')
+        if not user_token:
+            return jsonify({"error": "Authorization token required"}), 401
+        
+        if user_token.startswith('Bearer '):
+            user_token = user_token[7:]
+
+        data_json = request.get_json()
+        if not data_json:
+            return jsonify({"error": "No data provided"}), 400
+        
+        if not data_json.get('content_image') or not data_json.get('style_image'):
+            return jsonify({"error": "Content image or Style image is not provided"}), 400
+        
+        if not is_valid_base64(data_json['content_image']):
+            return jsonify({"error": "Content image must be a valid base64 string"}), 400
+            
+        if not is_valid_base64(data_json['style_image']):
+            return jsonify({"error": "Style image must be a valid base64 string"}), 400
+        
+        if not ('influence' in data_json and isinstance(data_json['influence'], (int, float))): # the influence of the style to the end (0.0-1.0)
+            data_json['influence'] = 0.8
+
+        if not ('creativity' in data_json or not isinstance(data_json['creativity'], (int, float))): # 1-15 (less is more artistic, while higher closer to the prompt)
+            data_json['creativity'] = 7
+
+        payload = style_trans(data_json['content_image'], data_json['style_image'], data_json['influence'], data_json['creativity'])
+
+        image = payload.get('stylized_image')
+        error = payload.get('error')
+
+        if error :
+            return jsonify({"error":error}), 500
+        
+        if not image:
+            return jsonify({"error": "Failed to generate image"}), 500
+
+        img_buffer = BytesIO()
+        
+        image_format = 'JPEG'  # or 'JPEG' depending on your needs
+        image.save(img_buffer, format=image_format)
+        img_buffer.seek(0)  # Reset buffer position to beginning
+        
+        files = {
+            'image': (
+                'generated_image.jpeg',  # filename
+                img_buffer.getvalue(),   # file content as bytes
+                'image/jpeg'             # MIME type
+            )
+        }
+        
+        # Prepare form data
+        form_data = {
+            'description': "No decription",
+            'isaigen': 'true'
+        }
+
+        upload_headers = {
+            'Authorization': f'Bearer {user_token}'
+        }
+
+
+        # Make a request to your Express API endpoint
+        express_api_url = "http://localhost:3000/api/files/upload-avatar"
+        
+        # Make the request with files and form data (NOT JSON)
+        response = requests.post(
+            express_api_url,
+            files=files,
+            data=form_data,     
+            headers=upload_headers,
+            timeout=30
+        )
+        
+        # Check response
+        if response.status_code == 201:  # uploadAvatar returns 201 on success
+            upload_result = response.json()
+            return jsonify({
+                "message": "Style transfer completed and saved successfully",
+                "image": upload_result['avatar'],
+                "imageUrl": upload_result['avatar']['imageUrl']
+            })
+        else:
+            print(f"Upload failed: {response.status_code} - {response.text}")
+            return jsonify({
+                "error": f"Failed to save image: {response.text}"
+            }), 500
+            
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": f"Backend connection error: {str(e)}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"Processing error: {str(e)}"}), 500
+
 
 if __name__ == '__main__':
     print("Starting Flask server for local AI models...")
