@@ -20,6 +20,8 @@ app.use(
   })
 );
 
+app.get("/", (req, res) => res.send("Express on Vercel"));
+
 app.use("/api", router);
 
 const server = http.createServer(app);
