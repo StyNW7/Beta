@@ -1,16 +1,16 @@
 import mongoose from "mongoose";
 
-const avatarSchema = new mongoose.Schema({
+const imageSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
-    index: true, // Important for performance
+    index: true,
   },
   fileId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    unique: true, // GridFS file ID
+    unique: true,
   },
   originalName: {
     type: String,
@@ -19,6 +19,13 @@ const avatarSchema = new mongoose.Schema({
   description: {
     type: String,
     required: false,
+  },
+  category: {
+    type: String,
+    required: false,
+    default: "profile",
+    index: true,
+    enum: ["profile", "template", "ai-generated", "other"],
   },
   size: {
     type: Number,
@@ -38,18 +45,20 @@ const avatarSchema = new mongoose.Schema({
     default: 0,
   },
 }, {
-  timestamps: true, // adds createdAt and updatedAt
+  timestamps: true,
 });
 
-// Compound index for efficient queries
-avatarSchema.index({ userId: 1, isActive: 1 });
+// Compound indexes for efficient queries
+imageSchema.index({ userId: 1, isActive: 1 });
+imageSchema.index({ userId: 1, category: 1 });
+imageSchema.index({ userId: 1, isActive: 1, category: 1 });
 
 // Virtual for image URL
-avatarSchema.virtual('imageUrl').get(function() {
+imageSchema.virtual('imageUrl').get(function() {
   return `/api/files/${this.fileId}`;
 });
 
-avatarSchema.set('toJSON', { virtuals: true });
+imageSchema.set('toJSON', { virtuals: true });
 
-const Avatar = mongoose.model("Avatar", avatarSchema);
-export default Avatar;
+const Images = mongoose.model("Images", imageSchema);
+export default Images;

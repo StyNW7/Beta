@@ -23,11 +23,11 @@ const userSchema = new mongoose.Schema({
   },
   avatar_collection: [{ 
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Avatar"
+    ref: "Images"
   }],
   main_avatar: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Avatar",
+    ref: "Images",
     required: false, // User might not have a main avatar initially
   }
 });

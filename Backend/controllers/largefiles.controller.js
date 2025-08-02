@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { getbucket } from "../config/db.js";
 import { uploadFileToGridFS, validateImageFile, getFileFromGridFS, deleteFileFromGridFS } from "../helper/largefile.js";
 import User from "../models/user.model.js";
-import Avatar from "../models/avatar.model.js";
+import Images from "../models/images.model.js";
 
 /**
  * Upload an image file to GridFS and create avatar record
@@ -16,7 +16,7 @@ export const uploadAvatar = async (req, res) => {
     }
 
     const { originalname, mimetype, buffer, size } = req.file;
-    const { description } = req.body;
+    const { description, isaigen } = req.body;
 
     // Validate image file
     try {
@@ -39,11 +39,12 @@ export const uploadAvatar = async (req, res) => {
     );
 
     // new avatar
-    const avatar = new Avatar({
+    const avatar = new Images({
       userId: req.user.userId,
       fileId: fileInfo.fileId,
       originalName: originalname,
       description: description || null,
+      category: isaigen ? "ai-generated" : "profile" ,
       size: size,
       mimeType: mimetype,
     });
@@ -74,6 +75,66 @@ export const uploadAvatar = async (req, res) => {
     res.status(500).json({ message: "Failed to upload image" });
   }
 };
+
+export const uploadTemplate = async (req,res) => {
+    try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No image file provided" });
+    }
+
+    const { originalname, mimetype, buffer, size } = req.file;
+    const { description } = req.body;
+
+    // Validate image file
+    try {
+      validateImageFile(buffer, originalname, 5); // 5MB limit
+    } catch (validationError) {
+      return res.status(400).json({ message: validationError.message });
+    }
+
+    // Upload to GridFS
+    const fileInfo = await uploadFileToGridFS(
+      buffer,
+      originalname,
+      {
+        uploadedBy: req.user.userId,
+        mimeType: mimetype,
+        size: size,
+        description: description || null,
+        fileType: "image",
+      }
+    );
+
+    // new avatar
+    const avatar = new Images({
+      userId: req.user.userId,
+      fileId: fileInfo.fileId,
+      originalName: originalname,
+      description: description || null,
+      category: category,
+      size: size,
+      mimeType: mimetype,
+    });
+
+    await avatar.save();
+
+    res.status(201).json({
+      message: "Image uploaded successfully",
+      avatar: {
+        id: avatar._id,
+        fileId: avatar.fileId,
+        originalName: avatar.originalName,
+        description: avatar.description,
+        size: avatar.size,
+        imageUrl: avatar.imageUrl,
+      },
+    });
+
+  } catch (error) {
+    console.error("Image upload error:", error);
+    res.status(500).json({ message: "Failed to upload image" });
+  }
+}
 
 /**
  * Get file by ID (serves the actual file)
@@ -144,7 +205,7 @@ export const getFileById = async (req, res) => {
  * @param {string} req.user.userId - ID of the authenticated user
  * @access Private
  */
-export const deleteFile = async (req, res) => {
+export const deleteAvatar = async (req, res) => {
   try {
     const fileId = req.params.id;
     
@@ -152,7 +213,7 @@ export const deleteFile = async (req, res) => {
       return res.status(400).json({ message: "Invalid file ID" });
     }
 
-    const avatar = await Avatar.findOne({ fileId: fileId });
+    const avatar = await Images.findOne({ fileId: fileId });
     
     if (!avatar) {
       return res.status(404).json({ message: "Avatar not found" });
@@ -170,7 +231,7 @@ export const deleteFile = async (req, res) => {
     await deleteFileFromGridFS(fileId);
     
     // Remove avatar record
-    await Avatar.findByIdAndDelete(avatar._id);
+    await Images.findByIdAndDelete(avatar._id);
     
     // Remove from user's avatar collection
     await User.findByIdAndUpdate(
@@ -197,6 +258,40 @@ export const deleteFile = async (req, res) => {
   }
 };
 
+export const deleteFile = async (req, res) => {
+  try {
+    const fileId = req.params.id;
+    
+    if (!mongoose.Types.ObjectId.isValid(fileId)) {
+      return res.status(400).json({ message: "Invalid file ID" });
+    }
+
+    const image = await Images.findOne({ fileId: fileId });
+    
+    if (!image) {
+      return res.status(404).json({ message: "Image not found" });
+    }
+
+    if (image.userId.toString() !== req.user.userId && req.user.role !== 'admin') {
+      return res.status(403).json({ message: "Not authorized to delete this file" });
+    }
+
+    // Delete from GridFS
+    await deleteFileFromGridFS(fileId);
+    
+    // Remove image record
+    await Images.findByIdAndDelete(image._id);
+    
+    res.status(200).json({ 
+      message: "File deleted successfully",
+    });
+
+  } catch (error) {
+    console.error("Delete file error:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 /**
  * Get all files uploaded by the current user
  * @route GET /api/files/my-files
@@ -208,13 +303,13 @@ export const getUserFiles = async (req, res) => {
   try {
     const userId = req.user.userId;
 
-    // Get avatars from Avatar collection instead of GridFS directly
-    const avatars = await Avatar.find({ 
+    // Get images from Avatar collection instead of GridFS directly
+    const images = await Images.find({ 
       userId: userId, 
       isActive: true 
     }).sort({ createdAt: -1 });
 
-    const fileList = avatars.map(avatar => ({
+    const fileList = images.map(avatar => ({
       _id: avatar.fileId,
       filename: avatar.originalName,
       length: avatar.size,
@@ -234,9 +329,6 @@ export const getUserFiles = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
-
-
 
 
 /****************************\

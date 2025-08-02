@@ -1,5 +1,5 @@
 import User from "../models/user.model.js";
-import Avatar from "../models/avatar.model.js";
+import Images from "../models/images.model.js";
 import mongoose from "mongoose";
 
 export const getUserProfile = async (req, res) => {
@@ -25,23 +25,25 @@ export const getUserAvatarCollections = async (req, res) => {
     
     const query = { 
       userId: req.user.userId, 
+      category: { $in: ["profile","ai-generated"] },
       isActive: true 
     };
 
     // Efficient pagination
-    const avatars = await Avatar.find(query)
+    const avatars = await Images.find(query)
       .sort({ createdAt: -1 })
       .limit(Number(limit) || 20)
       .skip((page - 1) * (Number(limit) || 20))
       .select('-__v'); // Exclude version field
 
-    const total = await Avatar.countDocuments(query);
+    const total = await Images.countDocuments(query);
 
     const avatarsWithUrls = avatars.map(avatar => ({
       id: avatar._id,
       fileId: avatar.fileId,
       originalName: avatar.originalName,
       description: avatar.description,
+      category: avatar.category,
       size: avatar.size,
       formattedSize: formatFileSize(avatar.size),
       mimeType: avatar.mimeType,
@@ -79,7 +81,7 @@ export const setMainAvatar = async (req, res) => {
     }
 
     // Check if avatar exists and belongs to user
-    const avatar = await Avatar.findOne({ _id: avatarId, userId: userId });
+    const avatar = await Images.findOne({ _id: avatarId, userId: userId });
     if (!avatar) {
       return res.status(404).json({ message: "Avatar not found or doesn't belong to user" });
     }

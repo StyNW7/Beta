@@ -6,7 +6,7 @@ import {
 } from "../controllers/auth.controller.js";
 import { getUserAvatarCollections, getUserProfile, setMainAvatar } from "../controllers/user.controller.js";
 import { getUserAvatarCollections, getUserProfile } from "../controllers/user.controller.js";
-import { deleteFile, getFileById } from "../controllers/largefiles.controller.js";
+import { deleteAvatar, getFileById, uploadAvatar, uploadTemplate, deleteFile } from "../controllers/largefiles.controller.js";
 import { protect } from "../middleware/protect.js";
 import upload from "../middleware/upload.js";
 import { getAllLandmarks } from "../controllers/landmark.controller.js";
@@ -31,9 +31,10 @@ router.get("/landmark", protect, getAllLandmarks);
 router.get("/question/:id", protect, getQuestionById);
 
 //files routes
-router.post("/files/upload-image", protect, upload.single('image'), uploadAvatar);
+router.post("/files/upload-avatar", protect, upload.single('image'), uploadAvatar);
+router.post("/files/upload-template", protect, upload.single('image'), uploadTemplate);
 router.get("/files/:id", getFileById); 
-router.delete("/files/:id", protect, deleteFile);
+router.delete("/files/:id", protect, deleteAvatar);
 
 
 export default router;
