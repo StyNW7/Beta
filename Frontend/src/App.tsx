@@ -24,7 +24,7 @@ import LoginPage from "./pages/Auth/login";
 // Pages
 
 import LandingPage from "@/pages/Landing/page";
-import MapGamePage from "./pages/GeoCulture/MapGamePage";
+import MapGamePage from "./pages/GeoCulture/page";
 
 // @ts-ignore
 import DemoPage from "./pages/Demo/page";
