@@ -7,7 +7,7 @@ import {
 import { getUserProfile } from "../controllers/user.controller.js";
 import { protect } from "../middleware/protect.js";
 import { getAllLandmarks, getLandmarkById } from "../controllers/landmark.controller.js";
-import { getQuestionById } from "../controllers/question.controller.js";
+import { getQuestionById, getRandomQuestions } from "../controllers/question.controller.js";
 
 const router = express.Router();
 
@@ -24,6 +24,7 @@ router.get("/landmark", protect, getAllLandmarks);
 router.get("/landmark/:id", protect, getLandmarkById);
 
 //question routes
+router.get("/question/random", getRandomQuestions); //route order matters
 router.get("/question/:id", protect, getQuestionById)
 
 export default router;

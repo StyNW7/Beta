@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import io, { Socket } from "socket.io-client";
 import Lobby from "./lobby";
 import Game from "./game";
+import { toast } from "sonner";
 
 const SOCKET_SERVER_URL = "http://localhost:3000";
 
@@ -64,7 +65,7 @@ function GeoCulturePage() {
     });
 
     socket.on("gameError", (message: string) => {
-      alert(message);
+      toast.error(message);
     });
 
     return () => {

@@ -1,4 +1,6 @@
 import { Server } from "socket.io";
+import { getRandomQuestions } from "./controllers/question.controller.js";
+import { fetchRandomQuestions } from "./services/question.service.js";
 
 let io;
 const gameSessions = {}; // In-memory game state
@@ -26,7 +28,7 @@ export function setupSocket(server) {
       socket.emit("gameCreated", gameSessions[gameId]);
     });
 
-    socket.on("joinGame", ({ gameId, playerName }) => {
+    socket.on("joinGame", async ({ gameId, playerName, category }) => {
       const session = gameSessions[gameId];
       if (session && session.players.length < 2) {
         session.players.push({ id: socket.id, name: playerName, score: 0 });
@@ -34,27 +36,23 @@ export function setupSocket(server) {
         io.to(gameId).emit("playerJoined", session);
 
         if (session.players.length === 2) {
-          session.rounds = [
-            {
-              questionNumber: 1,
-              imageSrc: "/Images/quizz/jam-gadang.png",
-              hint: "Menara jam ikonik ini terletak di jantung kota besar Sumatera",
-              correctAnswer: "Padang/Bukittinggi",
-              description:
-                "Ini adalah Jam Gadang yang terkenal di Bukittinggi, dekat Padang, Sumatera Barat.",
-              coordinates: { lat: -0.3049, lng: 100.3694 },
-            },
-            {
-              questionNumber: 2,
-              imageSrc: "/Images/quizz/tanah-lot.png",
-              hint: "Pura Hindu yang indah ini berada di atas formasi batu di tepi laut",
-              correctAnswer: "Bali",
-              description:
-                "Ini adalah Pura Tanah Lot, salah satu landmark paling ikonik di Bali.",
-              coordinates: { lat: -8.6211, lng: 115.0868 },
-            },
-          ];
-          io.to(gameId).emit("gameStarted", session);
+          try {
+            const rounds = await fetchRandomQuestions(2);
+            // console.log(rounds)
+            session.rounds = rounds.map((q, index) => ({
+              questionNumber: index + 1,
+              imageSrc: q.imageSrc,
+              hint: q.hint,
+              correctAnswer: q.correctAnswer,
+              description: q.description,
+              coordinates: q.coordinates,
+            }));
+
+            io.to(gameId).emit("gameStarted", session);
+          } catch (error) {
+            console.error("Error fetching questions:", error);
+            socket.emit("gameError", "Failed to load questions.");
+          }
         }
       } else {
         socket.emit("gameError", "Game not found or is full");

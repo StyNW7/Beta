@@ -10,7 +10,7 @@ import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import FloatingMenuButton from "@/components/geoculture/MenuButton";
+// import FloatingMenuButton from "@/components/geoculture/MenuButton";
 import { toast } from "sonner";
 import { Socket } from "socket.io-client";
 import {
@@ -321,29 +321,46 @@ function MapGamePage({ socket, gameSession }: GameProps) {
             {/* Show Round Result View */}
             {showRoundResult ? (
               <div>
-                <h2 className="text-xl font-bold mb-4">
-                  Round {currentRound.questionNumber} Results
+                <h2 className="text-xl font-bold mb-2">
+                  Hasil Ronde {currentRound.questionNumber}
                 </h2>
-                <div className="text-left">
-                  <p className="mb-2">
-                    <strong>Correct Location:</strong>{" "}
-                    {currentRound.correctAnswer}
-                  </p>
-                  <p className="mb-4">{currentRound.description}</p>
-                  <h3 className="font-bold">Scores:</h3>
-                  <ul>
-                    {gameSession.players.map((p) => (
-                      <li key={p.id}>
-                        {p.name}: {p.score} points
-                      </li>
-                    ))}
+                <p className="mb-4">
+                  Jawaban Benar: <strong>{currentRound.correctAnswer}</strong>
+                </p>
+                <img
+                  src={currentRound.imageSrc}
+                  alt="Lokasi jawaban"
+                  className="w-full h-48 object-cover rounded-xl shadow-lg mb-4"
+                />
+                <p className="text-gray-700 mb-4">{currentRound.description}</p>
+
+                {/* Scoreboard */}
+                <div className="text-left w-full border-t pt-4 mt-4">
+                  <h3 className="font-bold mb-2 text-lg">Papan Skor</h3>
+                  <ul className="space-y-2">
+                    {gameSession.players
+                      .sort((a, b) => b.score - a.score) // Sort by score
+                      .map((p, index) => (
+                        <li
+                          key={p.id}
+                          className="flex justify-between items-center p-2 rounded-md bg-gray-100"
+                        >
+                          <span className="font-medium">
+                            {index + 1}. {p.name}
+                          </span>
+                          <span className="font-semibold text-blue-600">
+                            {p.score} poin
+                          </span>
+                        </li>
+                      ))}
                   </ul>
                 </div>
+
                 <Button
                   onClick={handleNextRoundClick}
-                  className="mt-6 w-full bg-blue-600 hover:bg-blue-700"
+                  className="mt-6 w-full bg-red-500 hover:bg-red-600" // Matched button color
                 >
-                  Close
+                  Tutup
                 </Button>
               </div>
             ) : (
@@ -372,7 +389,7 @@ function MapGamePage({ socket, gameSession }: GameProps) {
           </div>
         </div>
       )}
-      <FloatingMenuButton />
+      {/* <FloatingMenuButton /> */}
     </div>
   );
 }
