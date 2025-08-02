@@ -13,12 +13,48 @@ import * as THREE from "three";
 // import { useGameStore } from "@/store/gameStore";
 import { MultiMonumentProximityManager } from './MultiMonumentProximityManager';
 import useLandmarkStore from "../../store/landmarkStore";
+import { Korrigan } from "./models/Korrigan";
+import { useGameStore } from "../../store/gameStore";
+import { useFrame } from "@react-three/fiber";
+
+const KorriganProximityManager = ({ korriganPosition, interactionDist }) => {
+  const playerPosition = useGameStore((state) => state.playerPosition);
+  const setIsNearKorrigan = useGameStore((state) => state.setIsNearKorrigan);
+  const setDistanceToKorrigan = useGameStore(
+    (state) => state.setDistanceToKorrigan
+  );
+
+  const wasNear = useRef(false);
+  const playerVec3 = useRef(new THREE.Vector3());
+
+  useFrame(() => {
+    if (playerPosition) {
+      playerVec3.current.set(
+        playerPosition.x,
+        playerPosition.y,
+        playerPosition.z
+      );
+    }
+    const distance = playerVec3.current.distanceTo(korriganPosition);
+    // console.log(distance) //it is not on the correct position???
+    setDistanceToKorrigan(distance / 1000);
+
+    const isNowNear = distance <= interactionDist;
+
+    if (isNowNear !== wasNear.current) {
+      setIsNearKorrigan(isNowNear);
+      wasNear.current = isNowNear;
+    }
+  });
+  return null;
+};
 
 export const Experience = () => {
   const shadowCameraRef = useRef();
   const INTERACTION_DIST = 1
   // const chestPosition = useGameStore((state) => state.chestPosition);
   // const tuguPosition = new THREE.Vector3(1, 0, 2);
+  const korriganPosition = new THREE.Vector3(0, 0, -1);
 
   const { landmarks } = useLandmarkStore();
   const [monumentsWithVector3, setMonumentsWithVector3] = useState([]);
@@ -79,12 +115,13 @@ export const Experience = () => {
         />
         <CharacterController />
         {monumentsWithVector3.map((monument) => (
-          <Tugu
-            key={monument._id}
-            scale={0.5}
-            position={monument.position}
-          />
+          <Tugu key={monument._id} scale={0.5} position={monument.position} />
         ))}
+        <Korrigan scale={1.5} position={korriganPosition} />
+        <KorriganProximityManager
+          korriganPosition={korriganPosition}
+          interactionDist={INTERACTION_DIST}
+        />
         <MultiMonumentProximityManager
           monuments={monumentsWithVector3}
           interactionDist={INTERACTION_DIST}

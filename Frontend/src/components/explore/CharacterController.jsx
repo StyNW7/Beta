@@ -4,7 +4,7 @@ import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import { Character } from "./models/Character";
 import { useRef, useState, useEffect } from "react";
 import { Vector3 } from "three";
-import { useFrame, useThree  } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useControls } from "leva";
 import { useKeyboardControls } from "@react-three/drei";
 import { degToRad } from "three/src/math/MathUtils.js";
@@ -61,7 +61,7 @@ export const CharacterController = () => {
   const cameraWorldPosition = useRef(new Vector3());
   const cameraLookAtWorldPosition = useRef(new Vector3());
   const cameraLookAt = useRef(new Vector3());
-  
+
   const [subscribeKeys, get] = useKeyboardControls();
   const setPlayerPosition = useGameStore((state) => state.setPlayerPosition);
   const openChest = useGameStore((state) => state.openChest);
@@ -92,9 +92,9 @@ export const CharacterController = () => {
       }
     };
 
-    canvas.addEventListener('wheel', handleWheel, { passive: false });
+    canvas.addEventListener("wheel", handleWheel, { passive: false });
     return () => {
-      canvas.removeEventListener('wheel', handleWheel);
+      canvas.removeEventListener("wheel", handleWheel);
     };
   }, [gl, zoomIn, zoomOut]);
 
@@ -109,9 +109,11 @@ export const CharacterController = () => {
         x: 0,
         z: 0,
       };
-const keyboard = get();
-      
-      const joystickMagnitude = Math.sqrt(joystickVector.x ** 2 + joystickVector.y ** 2);
+      const keyboard = get();
+
+      const joystickMagnitude = Math.sqrt(
+        joystickVector.x ** 2 + joystickVector.y ** 2
+      );
 
       if (joystickMagnitude > 0.1) {
         movement.z = -joystickVector.y;
@@ -124,7 +126,7 @@ const keyboard = get();
       }
 
       let speed = keyboard.run ? RUN_SPEED : WALK_SPEED;
-      
+
       if (joystickMagnitude > 0.1) {
         speed *= joystickMagnitude;
       }
@@ -135,13 +137,17 @@ const keyboard = get();
 
       if (movement.x !== 0 || movement.z !== 0) {
         characterRotationTarget.current = Math.atan2(movement.x, movement.z);
-        vel.x = Math.sin(rotationTarget.current + characterRotationTarget.current) * speed;
-        vel.z = Math.cos(rotationTarget.current + characterRotationTarget.current) * speed;
+        vel.x =
+          Math.sin(rotationTarget.current + characterRotationTarget.current) *
+          speed;
+        vel.z =
+          Math.cos(rotationTarget.current + characterRotationTarget.current) *
+          speed;
         setAnimation(speed > WALK_SPEED + 0.1 ? "run" : "walk");
       } else {
         setAnimation("idle");
       }
-      
+
       character.current.rotation.y = lerpAngle(
         character.current.rotation.y,
         characterRotationTarget.current,
@@ -160,8 +166,8 @@ const keyboard = get();
     camera.position.lerp(cameraWorldPosition.current, 0.1);
 
     if (cameraPosition.current) {
-        cameraPosition.current.position.y = 4 + cameraZoomOffset * 0.5;
-        cameraPosition.current.position.z = -4 - cameraZoomOffset;
+      cameraPosition.current.position.y = 2 + cameraZoomOffset * 0.5;
+      cameraPosition.current.position.z = -4 - cameraZoomOffset;
     }
 
     if (cameraTarget.current) {

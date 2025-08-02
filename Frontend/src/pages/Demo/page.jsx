@@ -5,27 +5,29 @@ import { KeyboardControls } from "@react-three/drei";
 import { Experience } from "../../components/explore/GameExperience";
 import FloatingMenuButton from "../../components/explore/FloatingButtonStyle";
 import { LandmarkInteraction } from '../../components/explore/LandmarkInteraction';
-import { TriviaModal } from "../../components/explore/TriviaModal";
-import { RewardModal } from "../../components/explore/RewardModal";
 import LandmarkModal from "../../components/explore/LandmarkModal";
 import { ZoomUI } from '../../components/explore/ZoomUI';
 import { Joystick } from '../../components/explore/Joystick';
 import { Leva } from "leva";
 import useLandmarkStore from "../../store/landmarkStore";
 import axios from "axios";
+import { KorriganInteraction } from '../../components/explore/KorriganInteraction';
+import ChatDialogue from '../../components/explore/ChatDialogue';
+import { useGameStore } from '../../store/gameStore';
 
-const keyboardMap = [
-  { name: "forward", keys: ["ArrowUp", "KeyW"] },
-  { name: "backward", keys: ["ArrowDown", "KeyS"] },
-  { name: "left", keys: ["ArrowLeft", "KeyA"] },
-  { name: "right", keys: ["ArrowRight", "KeyD"] },
-  { name: "run", keys: ["Shift"] },
-];
+// const keyboardMap = [
+//   { name: "forward", keys: ["ArrowUp", "KeyW"] },
+//   { name: "backward", keys: ["ArrowDown", "KeyS"] },
+//   { name: "left", keys: ["ArrowLeft", "KeyA"] },
+//   { name: "right", keys: ["ArrowRight", "KeyD"] },
+//   { name: "run", keys: ["Shift"] },
+// ];
 
 function DemoPage() {
   const { setLandmarks } = useLandmarkStore();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(true);
+  const { keyboardMap } = useGameStore();
   useEffect(() => {
     async function fetchLandmarks() {
       try {
@@ -56,10 +58,10 @@ function DemoPage() {
           <Experience />
         </Canvas>
         <LandmarkInteraction />
+        <KorriganInteraction />
         <ZoomUI />
-        {/* <TriviaModal />
-        <RewardModal /> */}
         <LandmarkModal />
+        <ChatDialogue />
         <Joystick />
         <Leva hidden />
       </KeyboardControls>

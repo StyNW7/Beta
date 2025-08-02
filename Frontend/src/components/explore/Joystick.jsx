@@ -31,6 +31,7 @@ export const Joystick = () => {
   const stickRef = useRef(null);
   const baseRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
+  const { showJoystick } = useGameStore();
 
   const handleTouchStart = (e) => {
     setIsDragging(true);
@@ -75,14 +76,18 @@ export const Joystick = () => {
   };
 
   return (
-    <div
-      ref={baseRef}
-      style={joystickBaseStyle}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
-      <div ref={stickRef} style={joystickStickStyle}></div>
-    </div>
+    <>
+      {showJoystick && (
+        <div
+          ref={baseRef}
+          style={joystickBaseStyle}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          <div ref={stickRef} style={joystickStickStyle}></div>
+        </div>
+      )}
+    </>
   );
 };
