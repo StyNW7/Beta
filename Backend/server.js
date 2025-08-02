@@ -15,7 +15,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "beta-indonesia.vercel.app"],
     credentials: true,
   })
 );
@@ -30,13 +30,17 @@ setupSocket(server);
 
 connectDB()
   .then(() => {
-    // app.listen(port, () => {
-    //   console.log(`Server running on http://localhost:${port}`);
-    // });
     server.listen(port, () => {
       console.log(`Server running on http://localhost:${port}`);
     });
   })
+  // .then(() => {
+  //   // Once the database connection is successful, start the server (deployment)
+  //   const PORT = process.env.PORT;
+  //   app.listen(PORT, () => {
+  //     console.log(`Server running on port ${PORT}`);
+  //   });
+  // })
   .catch((err) => {
     console.error("Failed to connect to DB", err);
     process.exit(1);
